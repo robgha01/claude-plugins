@@ -1,20 +1,21 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "robert-personal",
+  "description": "Personal Claude Code plugins for Robert Ghafoor",
   "owner": {
     "name": "Robert Ghafoor",
     "email": ""
   },
-  "metadata": {
-    "description": "Personal Claude Code plugins for Robert Ghafoor",
-    "version": "1.0.0"
-  },
   "plugins": [
     {
       "name": "jira-ticket",
-      "description": "Use when user provides a Jira ticket ID (pattern [A-Z]+-[0-9]+) in their message, or when /jira-ticket is invoked. The ID format itself is the trigger — no magic phrase needed. Skip only when the ID is clearly a reference, not a task start.",
+      "description": "Auto-starts the right workflow when a Jira ticket ID is mentioned. Looks up the ticket, ensures a deduplicated branch exists, assesses complexity, and hands off to the correct superpowers tier.",
+      "category": "development",
       "source": "./jira-ticket",
-      "strict": false,
-      "skills": ["./jira-ticket/skills/jira-ticket"]
+      "author": {
+        "name": "Robert Ghafoor",
+        "email": ""
+      }
     }
   ]
 }
