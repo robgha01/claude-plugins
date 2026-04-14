@@ -19,10 +19,8 @@ Works with **any Jira project prefix** (`SWBPAY-`, `PAY-`, `PLAT-`, etc.).
 ### Step 2 — Install the plugin
 
 ```
-/plugin
+/plugin install jira-ticket@robert-personal
 ```
-
-Select **jira-ticket** from the list.
 
 ### Step 3 — Reload
 

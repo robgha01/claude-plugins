@@ -23,10 +23,8 @@ Personal Claude Code plugin marketplace for [@robgha01](https://github.com/robgh
 ### Step 2 — Install a plugin
 
 ```
-/plugin
+/plugin install jira-ticket@robert-personal
 ```
-
-Select the plugin you want to install from the list.
 
 ### Step 3 — Reload
 
