@@ -1,0 +1,50 @@
+{
+  "eval_id": 4,
+  "eval_name": "uncommitted-stash-flow",
+  "run": "with_skill",
+  "pass_count": 8,
+  "total_count": 8,
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Announces 'Starting jira-ticket protocol for WEBR-696' at the start",
+      "passed": true,
+      "evidence": "Transcript line: '> Starting jira-ticket protocol for WEBR-696.'"
+    },
+    {
+      "text": "Calls getJiraIssue with WEBR-696",
+      "passed": true,
+      "evidence": "Tool called: mcp__claude_ai_Atlassian__getJiraIssue with issueIdOrKey: WEBR-696"
+    },
+    {
+      "text": "Runs git status --porcelain and detects uncommitted changes",
+      "passed": true,
+      "evidence": "Command: git status --porcelain, Output: 6 uncommitted items detected (modified tracked file + 5 untracked)"
+    },
+    {
+      "text": "Presents [S] stash / [C] continue / [X] stop choice to user",
+      "passed": true,
+      "evidence": "Warning presented with exactly [S] Stash / [C] Continue / [X] Stop options"
+    },
+    {
+      "text": "Runs git stash after [S] is chosen",
+      "passed": true,
+      "evidence": "Command: git stash, Output: 'Saved working directory and index state WIP on main: 64be8d9'"
+    },
+    {
+      "text": "Creates bugfix/WEBR-696-... branch after stashing",
+      "passed": true,
+      "evidence": "Branch created: bugfix/WEBR-696-not-a-work-item-just-for-testing-claude (Bug prefix, created after stash)"
+    },
+    {
+      "text": "Tier is assessed as Simple",
+      "passed": true,
+      "evidence": "Tier: Simple — Bug with 0 AC and unset story points"
+    },
+    {
+      "text": "Summary printed with branch status 'created'",
+      "passed": true,
+      "evidence": "Summary: 'bugfix/WEBR-696-not-a-work-item-just-for-testing-claude (created)'"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "eval_id": 5,
+  "eval_name": "existing-branch-checkout",
+  "run": "with_skill",
+  "pass_count": 8,
+  "total_count": 8,
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Announces 'Starting jira-ticket protocol for WEBR-698' at the start",
+      "passed": true,
+      "evidence": "Transcript: 'Starting jira-ticket protocol for WEBR-698.'"
+    },
+    {
+      "text": "Calls getJiraIssue with WEBR-698",
+      "passed": true,
+      "evidence": "Tool called: mcp__claude_ai_Atlassian__getJiraIssue with issueIdOrKey: WEBR-698"
+    },
+    {
+      "text": "Runs git branch --list and finds the pre-existing WEBR-698 branch",
+      "passed": true,
+      "evidence": "Command: git branch --list \"*WEBR-698*\", found: feature/WEBR-698-existing-test"
+    },
+    {
+      "text": "Identifies the branch belongs to the current user via git log",
+      "passed": true,
+      "evidence": "git log -1 --format=\"%an\" returned 'Robert Ghafoor'; git config user.name returned 'Robert Ghafoor' — match confirmed"
+    },
+    {
+      "text": "Checks out the existing branch (does not create a new one)",
+      "passed": true,
+      "evidence": "Command: git checkout feature/WEBR-698-existing-test (checkout, not checkout -b); no new branch created"
+    },
+    {
+      "text": "Tier is assessed as Simple",
+      "passed": true,
+      "evidence": "Tier: Simple — Story, 1 AC, unset story points"
+    },
+    {
+      "text": "Summary shows branch status as 'switched to' or 'checked out' not 'created'",
+      "passed": true,
+      "evidence": "Summary: 'feature/WEBR-698-existing-test (switched to existing branch)'"
+    },
+    {
+      "text": "Calls getTransitionsForJiraIssue to attempt In Progress transition",
+      "passed": true,
+      "evidence": "Tool called: mcp__claude_ai_Atlassian__getTransitionsForJiraIssue; no In Progress found, gracefully noted in summary"
+    }
+  ]
+}

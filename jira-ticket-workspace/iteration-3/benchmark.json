@@ -1,0 +1,84 @@
+{
+  "metadata": {
+    "skill_name": "jira-ticket",
+    "skill_path": "c:/Workspace/claude-plugins/jira-ticket/skills/jira-ticket",
+    "executor_model": "claude-sonnet-4-6",
+    "analyzer_model": "claude-sonnet-4-6",
+    "timestamp": "2026-04-14T00:00:00Z",
+    "evals_run": ["uncommitted-stash-flow", "existing-branch-checkout"],
+    "runs_per_configuration": 1,
+    "note": "Iteration-3: testing new features added in v2. No baseline run — these scenarios did not exist in v1 (stash flow, existing-branch checkout). with_skill = current v2 skill."
+  },
+  "runs": [
+    {
+      "eval_id": 4,
+      "eval_name": "uncommitted-stash-flow",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 90.2,
+        "tokens": 24009,
+        "tool_calls": 7,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Announces 'Starting jira-ticket protocol for WEBR-696' at the start", "passed": true, "evidence": "Exact text confirmed: 'Starting jira-ticket protocol for WEBR-696.'"},
+        {"text": "Calls getJiraIssue with WEBR-696", "passed": true, "evidence": "mcp__claude_ai_Atlassian__getJiraIssue called with issueIdOrKey: WEBR-696 via comprend.atlassian.net"},
+        {"text": "Runs git status --porcelain and detects uncommitted changes", "passed": true, "evidence": "git status --porcelain ran, output: 6 uncommitted items (1 modified tracked + 5 untracked)"},
+        {"text": "Presents [S] stash / [C] continue / [X] stop choice to user", "passed": true, "evidence": "Warning block with [S]/[C]/[X] options presented before branch operations"},
+        {"text": "Runs git stash after [S] is chosen", "passed": true, "evidence": "git stash ran: 'Saved working directory and index state WIP on main: 64be8d9'"},
+        {"text": "Creates bugfix/WEBR-696-... branch after stashing", "passed": true, "evidence": "Branch created: bugfix/WEBR-696-not-a-work-item-just-for-testing-claude (Bug prefix, after stash)"},
+        {"text": "Tier is assessed as Simple", "passed": true, "evidence": "Tier: Simple. Rule: Bug + 0 AC + unset points"},
+        {"text": "Summary printed with branch status 'created'", "passed": true, "evidence": "Summary: 'bugfix/WEBR-696-not-a-work-item-just-for-testing-claude (created)'"}
+      ],
+      "notes": ["8/8 perfect — stash path fully exercised", "cloudId used correctly: comprend.atlassian.net (no guessing needed this run)", "Graceful degradation: no In Progress transition, noted in summary"]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "existing-branch-checkout",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 80.6,
+        "tokens": 23038,
+        "tool_calls": 12,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Announces 'Starting jira-ticket protocol for WEBR-698' at the start", "passed": true, "evidence": "Exact text confirmed: 'Starting jira-ticket protocol for WEBR-698.'"},
+        {"text": "Calls getJiraIssue with WEBR-698", "passed": true, "evidence": "mcp__claude_ai_Atlassian__getJiraIssue called with issueIdOrKey: WEBR-698 via comprend.atlassian.net"},
+        {"text": "Runs git branch --list and finds the pre-existing WEBR-698 branch", "passed": true, "evidence": "git branch --list \"*WEBR-698*\" returned: feature/WEBR-698-existing-test"},
+        {"text": "Identifies the branch belongs to the current user via git log", "passed": true, "evidence": "git log -1 --format=\"%an\" = 'Robert Ghafoor'; git config user.name = 'Robert Ghafoor' — match confirmed"},
+        {"text": "Checks out the existing branch (does not create a new one)", "passed": true, "evidence": "git checkout feature/WEBR-698-existing-test (no -b flag); no new branch created"},
+        {"text": "Tier is assessed as Simple", "passed": true, "evidence": "Tier: Simple. Story + 1 AC + unset points"},
+        {"text": "Summary shows branch status as 'switched to' or 'checked out' not 'created'", "passed": true, "evidence": "Summary: 'feature/WEBR-698-existing-test (switched to existing branch)'"},
+        {"text": "Calls getTransitionsForJiraIssue to attempt In Progress transition", "passed": true, "evidence": "mcp__claude_ai_Atlassian__getTransitionsForJiraIssue called; no In Progress found, gracefully noted"}
+      ],
+      "notes": ["8/8 perfect — existing-branch path fully exercised", "Decision table correctly matched: current user branch → checkout not create", "Authorship confirmed via git log comparison with git config user.name"]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {"mean": 1.0, "stddev": 0.0, "min": 1.0, "max": 1.0},
+      "time_seconds": {"mean": 85.4, "stddev": 6.8, "min": 80.6, "max": 90.2},
+      "tokens": {"mean": 23524, "stddev": 692, "min": 23038, "max": 24009}
+    }
+  },
+  "notes": [
+    "Iteration-3 validates the two new edge-case paths added in v2: stash flow and existing-branch checkout",
+    "Both scenarios pass 8/8 — new feature branches in SKILL.md are working correctly",
+    "No baseline comparison: old skill had no Step 2a stash logic or Step 2c branch-reuse logic",
+    "Eval 4 (stash): [S]/[C]/[X] prompt fires on dirty state, stash completes before branch ops",
+    "Eval 5 (existing branch): authorship check via git log works; decision table routes to checkout not checkout -b",
+    "Jira transition graceful degradation confirmed again in both evals",
+    "Tokens and time are consistent (~85s, ~23.5k tokens) — no performance regression from new steps"
+  ]
+}

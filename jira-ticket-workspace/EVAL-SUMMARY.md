@@ -163,12 +163,46 @@ Tier assessed as **Complex** via fallback — the exact bug that was fixed. Also
 
 ---
 
+---
+
+## Iteration 3
+
+**Scope:** Validation of the two new edge-case paths added in v2 — both require environment setup so they were run as a separate iteration.  
+**Baseline:** No comparison run — these scenarios did not exist in v1 at all.
+
+### TC-4 · `start on WEBR-696` (dirty git state) — Uncommitted stash flow
+
+Verifies the Step 2a guard when uncommitted changes are present and the user chooses `[S]` to stash.
+
+| Test Case | with_skill (v2) |
+|---|---|
+| TC-4 Uncommitted stash flow | 8/8 (100%) |
+| TC-5 Existing branch checkout | 8/8 (100%) |
+| **Mean** | **100%** |
+
+**TC-4 key results:**
+- Dirty state detected by `git status --porcelain` (6 uncommitted items)
+- `[S] / [C] / [X]` prompt presented before branch operations
+- `git stash` ran successfully; stash confirmed before any branch search
+- `bugfix/WEBR-696-...` created after stash (Bug prefix, correct)
+- Tier: Simple (Bug, 0 AC, unset points)
+- `getTransitionsForJiraIssue` called; graceful degradation on no "In Progress"
+
+**TC-5 key results:**
+- `git branch --list "*WEBR-698*"` found pre-existing `feature/WEBR-698-existing-test`
+- Authorship confirmed: `git log -1 --format="%an"` matched `git config user.name` (both "Robert Ghafoor")
+- Decision table correctly routed to `git checkout` (not `checkout -b`) — no new branch created
+- Summary said `(switched to existing branch)` not `(created)`
+- Tier: Simple (Story, 1 AC, unset points)
+
+---
+
 ## Overall Progression
 
-| Metric | Iteration 1 (vs no-skill) | Iteration 2 (v2 vs v1) |
-|---|---|---|
-| with_skill mean pass rate | 54% | 95.8% |
-| baseline mean pass rate | 13% | 75.0% |
-| Delta | +41% | +21% |
-| MCP reachable | No | Yes |
-| Bugs confirmed live | 0 (all blocked) | 4 of 5 bugs confirmed |
+| Metric | Iteration 1 (vs no-skill) | Iteration 2 (v2 vs v1) | Iteration 3 (new paths) |
+|---|---|---|---|
+| with_skill mean pass rate | 54% | 95.8% | 100% |
+| baseline mean pass rate | 13% | 75.0% | n/a (new scenarios) |
+| Delta | +41% | +21% | — |
+| MCP reachable | No | Yes | Yes |
+| Bugs confirmed live | 0 (all blocked) | 4 of 5 bugs confirmed | All new paths confirmed |

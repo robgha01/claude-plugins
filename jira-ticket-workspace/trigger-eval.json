@@ -1,0 +1,82 @@
+[
+  {
+    "query": "start on WEBR-696",
+    "should_trigger": true
+  },
+  {
+    "query": "let's pick up ENG-1245 today, it's been sitting in the backlog for two weeks and the team is waiting",
+    "should_trigger": true
+  },
+  {
+    "query": "I've been assigned PLATFORM-88 — can you help me get the branch set up and get going?",
+    "should_trigger": true
+  },
+  {
+    "query": "begin SWBPAY-3021",
+    "should_trigger": true
+  },
+  {
+    "query": "hey we need to kick off MOBILE-440 today. it's the story about redesigning the onboarding flow, been blocked for a while",
+    "should_trigger": true
+  },
+  {
+    "query": "BACKEND-9912 is blocking the release, let's tackle it now. can you help me get set up?",
+    "should_trigger": true
+  },
+  {
+    "query": "just got assigned AUTH-55, it's a login bug on safari — where do I start?",
+    "should_trigger": true
+  },
+  {
+    "query": "going to tackle SEARCH-204 next after this PR merges — the one about improving autocomplete response times",
+    "should_trigger": true
+  },
+  {
+    "query": "can you help me get started on CHECKOUT-1001? its an epic about the new payment redesign, quite a big one",
+    "should_trigger": true
+  },
+  {
+    "query": "INFRA-34 just landed in my sprint queue, need to branch off and start. it's a chore to upgrade the node runtime",
+    "should_trigger": true
+  },
+  {
+    "query": "I see a reference to PROJ-123 in the readme, what does that mean? is that still relevant?",
+    "should_trigger": false
+  },
+  {
+    "query": "what was fixed in AUTH-55 last quarter? we're seeing a similar issue come up again",
+    "should_trigger": false
+  },
+  {
+    "query": "the PR for FEAT-201 was merged yesterday — can you check what files changed and summarise the diff?",
+    "should_trigger": false
+  },
+  {
+    "query": "can you look at the branch feature/WEBR-696-not-a-work-item and tell me what it changes vs main?",
+    "should_trigger": false
+  },
+  {
+    "query": "there's a bug in the login flow similar to what was described in AUTH-89 but it's a completely new issue unrelated to that ticket",
+    "should_trigger": false
+  },
+  {
+    "query": "how do I write a good commit message that references a jira ticket like PROJ-1234? any conventions I should follow?",
+    "should_trigger": false
+  },
+  {
+    "query": "I have a PR open for PLATFORM-88 that needs review — can you check the diff at github.com/acme/platform/pull/42 and leave comments?",
+    "should_trigger": false
+  },
+  {
+    "query": "list all the files that were changed as part of ENG-5500 so I can understand the scope of that refactor",
+    "should_trigger": false
+  },
+  {
+    "query": "the fix for MOBILE-440 seems to have introduced a regression — can you look at what MOBILE-440 actually changed and find the likely cause?",
+    "should_trigger": false
+  },
+  {
+    "query": "we use ticket references like WEBR-123 in our code comments — can you search the codebase and find all of them for me?",
+    "should_trigger": false
+  }
+]

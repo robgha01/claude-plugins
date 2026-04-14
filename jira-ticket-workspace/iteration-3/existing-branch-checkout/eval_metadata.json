@@ -1,0 +1,16 @@
+{
+  "eval_id": 5,
+  "eval_name": "existing-branch-checkout",
+  "prompt": "let's work on WEBR-698",
+  "setup": "Pre-create branch 'feature/WEBR-698-existing-test' attributed to the current git user before running the skill.",
+  "assertions": [
+    "Announces 'Starting jira-ticket protocol for WEBR-698' at the start",
+    "Calls getJiraIssue with WEBR-698",
+    "Runs git branch --list and finds the pre-existing WEBR-698 branch",
+    "Identifies the branch belongs to the current user via git log",
+    "Checks out the existing branch (does not create a new one)",
+    "Tier is assessed as Simple",
+    "Summary shows branch status as 'switched to' or 'checked out' not 'created'",
+    "Calls getTransitionsForJiraIssue to attempt In Progress transition"
+  ]
+}

@@ -4,23 +4,127 @@
     {
       "id": 1,
       "prompt": "start on WEBR-696",
-      "expected_output": "Skill fetches the Bug ticket, creates/checks out a branch named feature/WEBR-696-... (or bugfix/), assesses Simple tier, prints the summary table, and stops waiting for user to continue.",
+      "expected_output": "Skill fetches the Bug ticket, creates bugfix/WEBR-696-... branch, checks for uncommitted changes, assesses Simple tier, prints summary, attempts Jira transition.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        "Announces 'Starting jira-ticket protocol for WEBR-696' at the start",
+        "Calls getJiraIssue with ticket key WEBR-696",
+        "Checks for uncommitted changes with git status before branching",
+        "Branch name uses bugfix/ prefix (not feature/) because issue type is Bug",
+        "Branch name contains WEBR-696",
+        "Tier is assessed as Simple",
+        "Prints summary table with Ticket, Type, Branch, and Tier fields",
+        "Calls getTransitionsForJiraIssue to attempt In Progress transition"
+      ]
     },
     {
       "id": 2,
       "prompt": "let's work on WEBR-698",
-      "expected_output": "Skill fetches the Story ticket, creates/checks out a branch named feature/WEBR-698-..., assesses tier (Medium or Complex - depends on logic), prints summary table, and stops waiting for user to continue.",
+      "expected_output": "Skill fetches the Story ticket, creates feature/WEBR-698-... branch, assesses Simple tier (1 AC, unset points), prints summary, attempts Jira transition.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        "Announces 'Starting jira-ticket protocol for WEBR-698' at the start",
+        "Calls getJiraIssue with ticket key WEBR-698",
+        "Checks for uncommitted changes before branching",
+        "Branch name uses feature/ prefix",
+        "Branch name contains WEBR-698",
+        "Prints summary table with Ticket, Type, Branch, and Tier fields",
+        "Calls getTransitionsForJiraIssue to attempt In Progress transition",
+        "Tier assessment correctly reflects ticket data (Simple for low-AC/unset-points Story, not defaulting to Complex)"
+      ]
     },
     {
       "id": 3,
       "prompt": "begin WEBR-9999",
-      "expected_output": "Skill attempts to fetch WEBR-9999, fails (ticket not found), prints the exact error format from the skill (Error: Could not fetch WEBR-9999 + No git operations have been performed), and stops.",
+      "expected_output": "Skill attempts fetch, gets not-found error, prints exact error format, performs zero git operations.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        "Attempts getJiraIssue for WEBR-9999",
+        "Output contains 'Error: Could not fetch WEBR-9999'",
+        "Output contains 'No git operations have been performed'",
+        "Zero git commands executed (no branch creation, no checkout)",
+        "No branch was created or checked out"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "start on WEBR-696",
+      "expected_output": "With uncommitted changes pre-seeded, skill detects dirty state in Step 2a, presents [S]/[C]/[X] prompt, stashes when [S] is chosen, then creates bugfix/ branch and proceeds.",
+      "files": [],
+      "setup": "Pre-seed dirty git state before running the skill. Choose [S] (stash) when prompted.",
+      "assertions": [
+        "Announces 'Starting jira-ticket protocol for WEBR-696' at the start",
+        "Calls getJiraIssue with WEBR-696",
+        "Runs git status --porcelain and detects uncommitted changes",
+        "Presents [S] stash / [C] continue / [X] stop choice",
+        "Runs git stash after [S] is chosen",
+        "Creates bugfix/WEBR-696-... branch after stashing",
+        "Tier is assessed as Simple",
+        "Summary printed with branch status 'created'"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "let's work on WEBR-698",
+      "expected_output": "With a pre-existing WEBR-698 branch from the current user, skill detects it, confirms authorship, and checks it out rather than creating a new one.",
+      "files": [],
+      "setup": "Pre-create branch 'feature/WEBR-698-existing-test' before running the skill.",
+      "assertions": [
+        "Announces 'Starting jira-ticket protocol for WEBR-698' at the start",
+        "Calls getJiraIssue with WEBR-698",
+        "Runs git branch --list and finds the pre-existing WEBR-698 branch",
+        "Identifies the branch belongs to the current user via git log",
+        "Checks out the existing branch (does not create a new one)",
+        "Tier is assessed as Simple",
+        "Summary shows branch status as 'switched to' or 'checked out' not 'created'",
+        "Calls getTransitionsForJiraIssue to attempt In Progress transition"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "start on <TASK-TICKET-ID>",
+      "expected_output": "For a Task-type ticket, skill creates chore/<TICKET-ID>-... branch, assesses Simple tier, prints summary.",
+      "files": [],
+      "setup": "Requires a real Jira ticket of type Task in the comprend project.",
+      "assertions": [
+        "Announces starting protocol for the Task ticket",
+        "Calls getJiraIssue and confirms issueType is Task",
+        "Branch name uses chore/ prefix",
+        "Branch contains the ticket ID",
+        "Tier assessed as Simple",
+        "Summary printed",
+        "Calls getTransitionsForJiraIssue"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "let's tackle <EPIC-TICKET-ID>",
+      "expected_output": "For an Epic-type ticket, skill creates feature/ branch, assesses Complex tier, summary points to brainstorming.",
+      "files": [],
+      "setup": "Requires a real Jira ticket of type Epic in the comprend project.",
+      "assertions": [
+        "Announces starting protocol for the Epic ticket",
+        "Calls getJiraIssue and confirms issueType is Epic",
+        "Branch name uses feature/ prefix",
+        "Tier assessed as Complex (Epic always = Complex)",
+        "Summary printed with workflow description mentioning brainstorming",
+        "Calls getTransitionsForJiraIssue"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "start on <HIGH-AC-STORY-ID>",
+      "expected_output": "For a Story with 5+ ACs, skill creates feature/ branch and assesses Complex tier regardless of story points.",
+      "files": [],
+      "setup": "Requires a real Jira Story with 5+ acceptance criteria in the comprend project.",
+      "assertions": [
+        "Announces starting protocol for the Story ticket",
+        "Calls getJiraIssue and extracts 5+ acceptance criteria",
+        "Branch name uses feature/ prefix",
+        "Tier assessed as Complex (AC count >= 5 triggers Complex)",
+        "Summary printed",
+        "Calls getTransitionsForJiraIssue"
+      ]
     }
   ]
 }

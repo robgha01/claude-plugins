@@ -1,0 +1,16 @@
+{
+  "eval_id": 4,
+  "eval_name": "uncommitted-stash-flow",
+  "prompt": "start on WEBR-696",
+  "setup": "Pre-seed a dirty git state (create an uncommitted file) before running the skill. When the [S]/[C]/[X] prompt appears, choose [S] to stash.",
+  "assertions": [
+    "Announces 'Starting jira-ticket protocol for WEBR-696' at the start",
+    "Calls getJiraIssue with WEBR-696",
+    "Runs git status --porcelain and detects uncommitted changes",
+    "Presents [S] stash / [C] continue / [X] stop choice to user",
+    "Runs git stash after [S] is chosen",
+    "Creates bugfix/WEBR-696-... branch after stashing",
+    "Tier is assessed as Simple",
+    "Summary printed with branch status 'created'"
+  ]
+}
