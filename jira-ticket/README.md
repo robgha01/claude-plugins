@@ -1,58 +1,125 @@
-# jira-ticket-skill
+# 🎫 jira-ticket
 
 A Claude Code plugin that automates the workflow for starting Jira tickets.
 
-## What it does
+When you mention any Jira ticket ID, it fetches the ticket from Jira, ensures a correctly-named branch exists, assesses complexity, and hands off to the right superpowers workflow tier — automatically.
 
-When you mention any Jira ticket ID (e.g., `SWBPAY-1234`, `PAY-56`) in Claude Code:
+Works with **any Jira project prefix** (`SWBPAY-`, `PAY-`, `PLAT-`, etc.).
 
-1. Fetches ticket details from Jira (title, description, acceptance criteria, type, points)
-2. Checks for existing branches — avoids duplicates, handles multi-author conflicts
-3. Creates a branch named `feature/<TICKET-ID>-<short-title>` if none exists
-4. Assesses ticket complexity and selects the right workflow tier:
-   - **Simple** (bug/task, ≤2 AC, ≤2 points) → implement directly
-   - **Medium** (story, 3–5 AC, 3–4 points) → light brainstorm → implement
-   - **Complex** (epic, 5+ AC, 5+ points) → full brainstorm → plan → execute
+---
 
-Works with any Jira project prefix — not hardcoded to any team or project.
+## 🚀 Installation
 
-## Requirements
+### Step 1 — Add the marketplace
 
-- [Claude Code](https://claude.ai/code) with the [Superpowers plugin](https://github.com/anthropics/claude-plugins-official/tree/main/superpowers) installed
-- Atlassian MCP connected (for Jira lookups)
-- Git
-
-## Installation
-
-Add to `~/.claude/settings.json`:
-
-```json
-{
-  "extraKnownMarketplaces": {
-    "robert-personal": {
-      "source": { "source": "github", "repo": "robgha01/jira-ticket-skill" }
-    }
-  },
-  "enabledPlugins": {
-    "jira-ticket-skill@robert-personal": true
-  }
-}
+```
+/plugin marketplace add https://github.com/robgha01/claude-plugins.git
 ```
 
-Then restart Claude Code.
+### Step 2 — Install the plugin
 
-## Usage
+```
+/plugin
+```
 
-Just mention a Jira ticket ID anywhere in your message:
+Select **jira-ticket** from the list.
+
+### Step 3 — Reload
+
+```
+/reload-plugins
+```
+
+---
+
+## 📋 Requirements
+
+- [Claude Code](https://claude.ai/code)
+- [Superpowers plugin](https://github.com/anthropics/claude-plugins-official) installed and enabled
+- Atlassian MCP connected (provides Jira access)
+- Git
+
+---
+
+## ⚡ Usage
+
+Just mention a Jira ticket ID anywhere in your message — no magic phrase needed:
 
 ```
 SWBPAY-1234
-let's work on SWBPAY-1234
+```
+
+```
+let's start SWBPAY-1234
+```
+
+```
 SWBPAY-1234 implement the new CTA block
 ```
 
-Or use the slash command explicitly:
+Or use the explicit slash command:
 
 ```
 /jira-ticket SWBPAY-1234
 ```
+
+---
+
+## 🔄 What Happens
+
+Once triggered, the protocol runs 4 steps automatically:
+
+**1. Jira Lookup**
+Fetches ticket title, description, acceptance criteria, type, status, assignee, and story points via the Atlassian MCP. Stops immediately with a clear error if the ticket doesn't exist or MCP is not connected — no git operations performed.
+
+**2. Branch Check & Create**
+Searches local and remote branches for any match on the ticket ID. Checks authorship of found branches:
+- Your branch exists → switch to it
+- Someone else's branch exists → shows a list, asks whether to use theirs or create your own
+- No branch exists → creates `feature/<TICKET-ID>-<short-title>`
+
+**3. Complexity Assessment**
+Evaluates ticket type, story points, and acceptance criteria count to assign a tier:
+
+| Tier | Signals | Workflow |
+|---|---|---|
+| 🟢 Simple | Bug/Task, ≤2 AC, ≤2 pts | Implement directly → verify |
+| 🟡 Medium | Story, 3–5 AC, 3–4 pts | Light brainstorm → implement → verify |
+| 🔴 Complex | Epic, 5+ AC, 5+ pts, or unclear scope | Full brainstorm → plan → execute → verify |
+
+You can override the assessed tier before anything proceeds.
+
+**4. Workflow Handoff**
+Hands off to the appropriate superpowers skill (`brainstorming`, `writing-plans`, `executing-plans`) with ticket context pre-loaded, so the workflow starts informed rather than from scratch.
+
+---
+
+## 📊 Context Summary
+
+Before invoking any workflow, the plugin always prints:
+
+```
+Ticket:  SWBPAY-1234 — Add CTA block with icon support
+Type:    Story | Points: 5 | Status: In Progress | Assignee: Robert
+Branch:  feature/SWBPAY-1234-add-cta-block-with-icon-support (created)
+Tier:    Complex — full brainstorm → plan → execute
+         (Story, 5 points, 4 acceptance criteria)
+
+→ Reply to override tier (simple / medium / complex), or just continue with your task
+```
+
+---
+
+## 🔧 Troubleshooting
+
+**Skill not triggering automatically**
+Ensure the plugin is enabled and Claude Code has been reloaded:
+```
+/reload-plugins
+```
+
+**Jira lookup failing**
+Check that the Atlassian MCP is connected. The plugin will print a clear error and stop before touching git if it can't reach Jira.
+
+**Wrong branch detected**
+The branch search matches on `*<TICKET-ID>*`. If you have branches with similar IDs, the authorship check will identify which belongs to you.
