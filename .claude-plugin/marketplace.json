@@ -1,0 +1,20 @@
+{
+  "name": "robert-personal",
+  "owner": {
+    "name": "Robert Ghafoor",
+    "email": ""
+  },
+  "metadata": {
+    "description": "Personal Claude Code plugins for Robert Ghafoor",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "jira-ticket",
+      "description": "Use when user provides a Jira ticket ID (pattern [A-Z]+-[0-9]+) in their message, or when /jira-ticket is invoked. The ID format itself is the trigger — no magic phrase needed. Skip only when the ID is clearly a reference, not a task start.",
+      "source": "./jira-ticket",
+      "strict": false,
+      "skills": ["./jira-ticket/skills/jira-ticket"]
+    }
+  ]
+}
