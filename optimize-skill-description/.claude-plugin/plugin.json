@@ -1,0 +1,10 @@
+{
+  "name": "optimize-skill-description",
+  "description": "Iteratively improves a skill's description field to trigger at the right times. Uses inline self-evaluation instead of subprocess calls — no API key needed, works on Windows.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Robert Ghafoor",
+    "email": ""
+  },
+  "keywords": ["skills", "optimization", "description", "trigger", "eval"]
+}
