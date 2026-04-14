@@ -16,6 +16,16 @@
         "name": "Robert Ghafoor",
         "email": ""
       }
+    },
+    {
+      "name": "optimize-skill-description",
+      "description": "Iteratively improves a skill's description field to trigger at the right times. Uses inline self-evaluation — no API key or subprocess calls needed, works on Windows.",
+      "category": "development",
+      "source": "./optimize-skill-description",
+      "author": {
+        "name": "Robert Ghafoor",
+        "email": ""
+      }
     }
   ]
 }

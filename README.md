@@ -9,6 +9,7 @@ Personal Claude Code plugin marketplace for [@robgha01](https://github.com/robgh
 | Plugin | Description |
 |---|---|
 | 🎫 [jira-ticket](jira-ticket/) | Auto-starts the right workflow when a Jira ticket ID is mentioned — fetches ticket, creates branch, picks workflow tier |
+| 🎯 [optimize-skill-description](optimize-skill-description/) | Iteratively improves a skill's description field using inline self-evaluation — no API key needed, works on Windows |
 
 ---
 
@@ -66,8 +67,8 @@ Claude Code auto-updates plugins based on your `autoUpdatesChannel` setting. To 
 ```
 claude-plugins/
 ├── .claude-plugin/
-│   └── marketplace.json     ← marketplace registry
-├── jira-ticket/             ← jira-ticket plugin
+│   └── marketplace.json                    ← marketplace registry
+├── jira-ticket/                            ← jira-ticket plugin
 │   ├── .claude-plugin/
 │   │   └── plugin.json
 │   ├── skills/
@@ -75,6 +76,13 @@ claude-plugins/
 │   │       └── SKILL.md
 │   ├── CLAUDE.md
 │   ├── LICENSE
+│   └── README.md
+├── optimize-skill-description/             ← optimize-skill-description plugin
+│   ├── .claude-plugin/
+│   │   └── plugin.json
+│   ├── skills/
+│   │   └── optimize-skill-description/
+│   │       └── SKILL.md
 │   └── README.md
 └── README.md
 ```
