@@ -1,6 +1,12 @@
 ---
 name: jira-ticket
 description: Use when user provides a Jira ticket ID (pattern [A-Z]+-[0-9]+) in their message, or when /jira-ticket is invoked. The ID format itself is the trigger — no magic phrase needed. Skip only when the ID is clearly a reference, not a task start.
+argument-hint: <TICKET-ID>
+allowed-tools:
+  - Bash
+  - Read
+  - Grep
+  - Glob
 ---
 
 # Jira Ticket Protocol
