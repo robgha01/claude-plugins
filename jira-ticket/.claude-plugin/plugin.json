@@ -1,7 +1,7 @@
 {
   "name": "jira-ticket",
   "description": "Auto-starts the right workflow when a Jira ticket ID is mentioned. Looks up the ticket, ensures a deduplicated branch exists, assesses complexity, and hands off to the correct superpowers tier.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Robert Ghafoor",
     "email": ""
