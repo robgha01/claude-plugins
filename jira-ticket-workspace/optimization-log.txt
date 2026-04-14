@@ -1,0 +1,124 @@
+Split: 12 train, 8 test (holdout=0.4)
+
+============================================================
+Iteration 1/5
+Description: Use when user provides a Jira ticket ID (pattern [A-Z]+-[0-9]+) in their message, or when /jira-ticket is invoked. The ID format itself is the trigger — no magic phrase needed. Skip only when the ID is clearly a reference, not a task start.
+============================================================
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Train: 18/36 correct, precision=100% recall=0% accuracy=50% (4.2s)
+  [FAIL] rate=0/3 expected=True: BACKEND-9912 is blocking the release, let's tackle it now. c
+  [FAIL] rate=0/3 expected=True: just got assigned AUTH-55, it's a login bug on safari — wher
+  [FAIL] rate=0/3 expected=True: INFRA-34 just landed in my sprint queue, need to branch off 
+  [FAIL] rate=0/3 expected=True: hey we need to kick off MOBILE-440 today. it's the story abo
+  [FAIL] rate=0/3 expected=True: start on WEBR-696
+  [FAIL] rate=0/3 expected=True: let's pick up ENG-1245 today, it's been sitting in the backl
+  [PASS] rate=0/3 expected=False: what was fixed in AUTH-55 last quarter? we're seeing a simil
+  [PASS] rate=0/3 expected=False: the fix for MOBILE-440 seems to have introduced a regression
+  [PASS] rate=0/3 expected=False: list all the files that were changed as part of ENG-5500 so 
+  [PASS] rate=0/3 expected=False: I see a reference to PROJ-123 in the readme, what does that 
+  [PASS] rate=0/3 expected=False: we use ticket references like WEBR-123 in our code comments 
+  [PASS] rate=0/3 expected=False: I have a PR open for PLATFORM-88 that needs review — can you
+Test : 12/24 correct, precision=100% recall=0% accuracy=50% (0.0s)
+  [FAIL] rate=0/3 expected=True: going to tackle SEARCH-204 next after this PR merges — the o
+  [FAIL] rate=0/3 expected=True: begin SWBPAY-3021
+  [FAIL] rate=0/3 expected=True: can you help me get started on CHECKOUT-1001? its an epic ab
+  [FAIL] rate=0/3 expected=True: I've been assigned PLATFORM-88 — can you help me get the bra
+  [PASS] rate=0/3 expected=False: how do I write a good commit message that references a jira 
+  [PASS] rate=0/3 expected=False: can you look at the branch feature/WEBR-696-not-a-work-item 
+  [PASS] rate=0/3 expected=False: the PR for FEAT-201 was merged yesterday — can you check wha
+  [PASS] rate=0/3 expected=False: there's a bug in the login flow similar to what was describe
+
+Improving description...
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Robert\.claude\plugins\cache\claude-plugins-official\skill-creator\unknown\skills\skill-creator\scripts\run_loop.py", line 332, in <module>
+    main()
+  File "C:\Users\Robert\.claude\plugins\cache\claude-plugins-official\skill-creator\unknown\skills\skill-creator\scripts\run_loop.py", line 297, in main
+    output = run_loop(
+             ^^^^^^^^^
+  File "C:\Users\Robert\.claude\plugins\cache\claude-plugins-official\skill-creator\unknown\skills\skill-creator\scripts\run_loop.py", line 202, in run_loop
+    new_description = improve_description(
+                      ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Robert\.claude\plugins\cache\claude-plugins-official\skill-creator\unknown\skills\skill-creator\scripts\improve_description.py", line 114, in improve_description
+    response = client.messages.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Robert\.pyenv\pyenv-win\versions\3.12.10\Lib\site-packages\anthropic\_utils\_utils.py", line 283, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Robert\.pyenv\pyenv-win\versions\3.12.10\Lib\site-packages\anthropic\resources\messages\messages.py", line 996, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\Robert\.pyenv\pyenv-win\versions\3.12.10\Lib\site-packages\anthropic\_base_client.py", line 1368, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Robert\.pyenv\pyenv-win\versions\3.12.10\Lib\site-packages\anthropic\_base_client.py", line 1062, in request
+    request = self._build_request(options, retries_taken=retries_taken)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Robert\.pyenv\pyenv-win\versions\3.12.10\Lib\site-packages\anthropic\_base_client.py", line 521, in _build_request
+    headers = self._build_headers(options, retries_taken=retries_taken)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Robert\.pyenv\pyenv-win\versions\3.12.10\Lib\site-packages\anthropic\_base_client.py", line 451, in _build_headers
+    self._validate_headers(headers_dict, custom_headers)
+  File "C:\Users\Robert\.pyenv\pyenv-win\versions\3.12.10\Lib\site-packages\anthropic\_client.py", line 196, in _validate_headers
+    raise TypeError(
+TypeError: "Could not resolve authentication method. Expected either api_key or auth_token to be set. Or for one of the `X-Api-Key` or `Authorization` headers to be explicitly omitted"
