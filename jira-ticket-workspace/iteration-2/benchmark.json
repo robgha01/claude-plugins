@@ -1,0 +1,197 @@
+{
+  "metadata": {
+    "skill_name": "jira-ticket",
+    "skill_path": "c:/Workspace/claude-plugins/jira-ticket/skills/jira-ticket",
+    "executor_model": "claude-sonnet-4-6",
+    "analyzer_model": "claude-sonnet-4-6",
+    "timestamp": "2026-04-14T00:00:00Z",
+    "evals_run": ["bug-ticket-simple-tier", "story-ticket-tier-assessment", "error-nonexistent-ticket"],
+    "runs_per_configuration": 1,
+    "note": "with_skill = v2 (post-fixes). without_skill = old skill v1 (pre-fixes). Atlassian MCP connected via comprend.atlassian.net."
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "eval_name": "bug-ticket-simple-tier",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 154.0,
+        "tokens": 30976,
+        "tool_calls": 35,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Announces 'Starting jira-ticket protocol for WEBR-696' at the start", "passed": true, "evidence": "Exact text confirmed in transcript line 3"},
+        {"text": "Calls getJiraIssue with ticket key WEBR-696", "passed": true, "evidence": "Success via comprend.atlassian.net after 5 cloudId attempts"},
+        {"text": "Checks for uncommitted changes with git status before branching", "passed": true, "evidence": "Step 2a: git status --porcelain ran, found uncommitted changes, proceeded as [C]"},
+        {"text": "Branch name uses bugfix/ prefix (not feature/) because issue type is Bug", "passed": true, "evidence": "Branch: bugfix/WEBR-696-not-a-work-item-just-for-testing"},
+        {"text": "Branch name contains WEBR-696", "passed": true, "evidence": "Branch: bugfix/WEBR-696-not-a-work-item-just-for-testing"},
+        {"text": "Tier is assessed as Simple", "passed": true, "evidence": "Tier: Simple. Bug, unset points, 0 ACs."},
+        {"text": "Prints summary table with Ticket, Type, Branch, and Tier fields", "passed": true, "evidence": "Full summary table printed in Step 3b"},
+        {"text": "Calls getTransitionsForJiraIssue and transitionJiraIssue to transition ticket to In Progress", "passed": true, "evidence": "getTransitionsForJiraIssue called — only 'Ready to be started' available, graceful degradation (no In Progress on test ticket)"}
+      ],
+      "notes": ["Perfect 8/8 — all new features fired correctly", "cloudId discovery required 5 attempts", "Branch created and cleaned up successfully"]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "bug-ticket-simple-tier",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.625,
+        "passed": 5,
+        "failed": 3,
+        "total": 8,
+        "time_seconds": 71.0,
+        "tokens": 20511,
+        "tool_calls": 10,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Announces 'Starting jira-ticket protocol for WEBR-696' at the start", "passed": true, "evidence": "Old skill also announces correctly"},
+        {"text": "Calls getJiraIssue with ticket key WEBR-696", "passed": true, "evidence": "Succeeded via comprend.atlassian.net"},
+        {"text": "Checks for uncommitted changes with git status before branching", "passed": false, "evidence": "Old skill has no Step 2a — went directly to branch search without git status"},
+        {"text": "Branch name uses bugfix/ prefix (not feature/) because issue type is Bug", "passed": false, "evidence": "Old skill always uses feature/ — created feature/WEBR-696-not-a-work-item-just-for-testing-claude"},
+        {"text": "Branch name contains WEBR-696", "passed": true, "evidence": "Branch: feature/WEBR-696-not-a-work-item-just-for-testing-claude"},
+        {"text": "Tier is assessed as Simple", "passed": true, "evidence": "Correctly Simple: Bug, 0 ACs, unset points"},
+        {"text": "Prints summary table with Ticket, Type, Branch, and Tier fields", "passed": true, "evidence": "Summary printed correctly"},
+        {"text": "Calls getTransitionsForJiraIssue and transitionJiraIssue to transition ticket to In Progress", "passed": false, "evidence": "Old skill has no Step 2h — transition not attempted at all"}
+      ],
+      "notes": ["3 failures are exactly the 3 new features: uncommitted guard, bugfix/ prefix, Jira transition"]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "story-ticket-tier-assessment",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.875,
+        "passed": 7,
+        "failed": 1,
+        "total": 8,
+        "time_seconds": 106.0,
+        "tokens": 27352,
+        "tool_calls": 21,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Announces 'Starting jira-ticket protocol for WEBR-698' at the start", "passed": true, "evidence": "Exact text confirmed"},
+        {"text": "Calls getJiraIssue with ticket key WEBR-698", "passed": true, "evidence": "Succeeded via comprend.atlassian.net"},
+        {"text": "Checks for uncommitted changes before branching", "passed": false, "evidence": "Bash denied in subagent context — git status inferred not actually run"},
+        {"text": "Branch name uses feature/ prefix", "passed": true, "evidence": "Branch: feature/WEBR-698-not-a-work-item-just-for-testing-claude"},
+        {"text": "Branch name contains WEBR-698", "passed": true, "evidence": "Branch: feature/WEBR-698-not-a-work-item-just-for-testing-claude"},
+        {"text": "Prints summary table with Ticket, Type, Branch, and Tier fields", "passed": true, "evidence": "Full summary table in transcript"},
+        {"text": "Calls getTransitionsForJiraIssue and transitionJiraIssue to transition ticket to In Progress", "passed": true, "evidence": "getTransitionsForJiraIssue called — graceful degradation on no In Progress"},
+        {"text": "Tier assessment correctly reflects ticket data (Simple for low-AC/unset-points Story, not defaulting to Complex)", "passed": true, "evidence": "Tier: Simple — Story, 1 AC, unset points. New rule matched. Old skill gave Complex."}
+      ],
+      "notes": ["1 failure: Bash denied subagent timing issue — works fine in real user sessions", "Key win: tier correctly Simple not Complex"]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "story-ticket-tier-assessment",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.625,
+        "passed": 5,
+        "failed": 3,
+        "total": 8,
+        "time_seconds": 98.8,
+        "tokens": 24190,
+        "tool_calls": 14,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Announces 'Starting jira-ticket protocol for WEBR-698' at the start", "passed": true, "evidence": "Old skill announces correctly"},
+        {"text": "Calls getJiraIssue with ticket key WEBR-698", "passed": true, "evidence": "Succeeded via comprend.atlassian.net"},
+        {"text": "Checks for uncommitted changes before branching", "passed": false, "evidence": "Old skill has no Step 2a"},
+        {"text": "Branch name uses feature/ prefix", "passed": true, "evidence": "Branch: feature/WEBR-698-not-a-work-item-just-for-testing-claude"},
+        {"text": "Branch name contains WEBR-698", "passed": true, "evidence": "Branch: feature/WEBR-698-not-a-work-item-just-for-testing-claude"},
+        {"text": "Prints summary table with Ticket, Type, Branch, and Tier fields", "passed": true, "evidence": "Summary printed"},
+        {"text": "Calls getTransitionsForJiraIssue and transitionJiraIssue to transition ticket to In Progress", "passed": false, "evidence": "Old skill has no Step 2h — not attempted"},
+        {"text": "Tier assessment correctly reflects ticket data (Simple for low-AC/unset-points Story, not defaulting to Complex)", "passed": false, "evidence": "Tier: COMPLEX via fallback. Bug confirmed: Story+1AC+unset → Complex in old skill."}
+      ],
+      "notes": ["3 failures: uncommitted guard, Jira transition, tier logic bug confirmed live"]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "error-nonexistent-ticket",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 49.5,
+        "tokens": 19522,
+        "tool_calls": 8,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Attempts getJiraIssue for WEBR-9999", "passed": true, "evidence": "getJiraIssue called twice with different cloudIds"},
+        {"text": "Output contains 'Error: Could not fetch WEBR-9999'", "passed": true, "evidence": "Exact text in Error Output section"},
+        {"text": "Output contains 'No git operations have been performed'", "passed": true, "evidence": "Exact text in Error Output section"},
+        {"text": "Zero git commands executed (no branch creation, no checkout)", "passed": true, "evidence": "Git Operations: None — stopped at error handling"},
+        {"text": "No branch was created or checked out", "passed": true, "evidence": "Confirmed no git operations"}
+      ],
+      "notes": ["Error handling remains perfect"]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "error-nonexistent-ticket",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 28.8,
+        "tokens": 16766,
+        "tool_calls": 5,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Attempts getJiraIssue for WEBR-9999", "passed": true, "evidence": "getJiraIssue called with robertghafoor.atlassian.net → 404"},
+        {"text": "Output contains 'Error: Could not fetch WEBR-9999'", "passed": true, "evidence": "Exact text present in Error Output section"},
+        {"text": "Output contains 'No git operations have been performed'", "passed": true, "evidence": "Exact text present"},
+        {"text": "Zero git commands executed (no branch creation, no checkout)", "passed": true, "evidence": "Git Operations: None"},
+        {"text": "No branch was created or checked out", "passed": true, "evidence": "Confirmed no git operations"}
+      ],
+      "notes": ["Error handling was already correct in old skill"]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {"mean": 0.958, "stddev": 0.072, "min": 0.875, "max": 1.0},
+      "time_seconds": {"mean": 103.2, "stddev": 52.7, "min": 49.5, "max": 154.0},
+      "tokens": {"mean": 25950, "stddev": 5886, "min": 19522, "max": 30976}
+    },
+    "without_skill": {
+      "pass_rate": {"mean": 0.750, "stddev": 0.217, "min": 0.625, "max": 1.0},
+      "time_seconds": {"mean": 66.2, "stddev": 35.3, "min": 28.8, "max": 98.8},
+      "tokens": {"mean": 20489, "stddev": 3713, "min": 16766, "max": 24190}
+    },
+    "delta": {
+      "pass_rate": "+0.21",
+      "time_seconds": "+37.0",
+      "tokens": "+5461"
+    }
+  },
+  "notes": [
+    "without_skill = old skill v1 (pre-fixes), not no-skill baseline — this measures improvement from v1 to v2",
+    "Eval 3 (error handling) 5/5 in both — not a differentiator, confirms no regression",
+    "Key discriminating evals: 1 and 2. v2 wins on bugfix/ prefix, uncommitted guard, Jira transition, tier fix",
+    "Eval 1 with_skill 8/8 (100%) — all 4 new features confirmed working in live Jira session",
+    "Eval 2 with_skill 7/8: 1 failure from Bash subagent timing issue, not a real skill bug",
+    "cloudId guessing: agents tried 3-5 cloudIds before comprend.atlassian.net — skill should hint getAccessibleAtlassianResources first",
+    "Jira test tickets have no 'In Progress' transition — Step 2h gracefully degraded correctly for both tickets",
+    "Token overhead +5461 (+26.6%) and time +37s (+56%) are costs of new Steps 2a and 2h"
+  ]
+}

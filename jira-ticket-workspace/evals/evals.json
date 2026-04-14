@@ -1,0 +1,26 @@
+{
+  "skill_name": "jira-ticket",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "start on WEBR-696",
+      "expected_output": "Skill fetches the Bug ticket, creates/checks out a branch named feature/WEBR-696-... (or bugfix/), assesses Simple tier, prints the summary table, and stops waiting for user to continue.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "prompt": "let's work on WEBR-698",
+      "expected_output": "Skill fetches the Story ticket, creates/checks out a branch named feature/WEBR-698-..., assesses tier (Medium or Complex - depends on logic), prints summary table, and stops waiting for user to continue.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 3,
+      "prompt": "begin WEBR-9999",
+      "expected_output": "Skill attempts to fetch WEBR-9999, fails (ticket not found), prints the exact error format from the skill (Error: Could not fetch WEBR-9999 + No git operations have been performed), and stops.",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "expectations": [
+    {
+      "text": "Announces 'Starting jira-ticket protocol for WEBR-696' at the start",
+      "passed": true,
+      "evidence": "Transcript line 5: 'Starting jira-ticket protocol for WEBR-696.'"
+    },
+    {
+      "text": "Calls getJiraIssue with ticket key WEBR-696",
+      "passed": true,
+      "evidence": "Transcript confirms: 'Attempted to call mcp__claude_ai_Atlassian__getJiraIssue with issueIdOrKey: WEBR-696'"
+    },
+    {
+      "text": "Branch name contains WEBR-696",
+      "passed": false,
+      "evidence": "No branch created — MCP call was denied before git was reached. Eval environment limitation, not a skill bug."
+    },
+    {
+      "text": "Branch name uses feature/ prefix (documents current behavior - bug is it should be bugfix/ for Bug type)",
+      "passed": false,
+      "evidence": "No branch created due to MCP block. Cannot verify branch naming."
+    },
+    {
+      "text": "Tier is assessed as Simple",
+      "passed": false,
+      "evidence": "Step 3 not reached — no ticket data available from blocked MCP call."
+    },
+    {
+      "text": "Prints summary table containing Ticket, Type, Branch, and Tier fields",
+      "passed": false,
+      "evidence": "No summary printed — Steps 2 and 3 were correctly blocked after Step 1 failure."
+    },
+    {
+      "text": "No errors encountered during execution",
+      "passed": false,
+      "evidence": "1 error: mcp__claude_ai_Atlassian__getJiraIssue permission denied in eval subagent context."
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 5,
+    "total": 7,
+    "pass_rate": 0.29,
+    "note": "5 failures are eval environment limitations (MCP not pre-approved for subagents), not skill bugs. The 2 passing assertions confirm the skill's trigger and lookup behavior are correct."
+  }
+}

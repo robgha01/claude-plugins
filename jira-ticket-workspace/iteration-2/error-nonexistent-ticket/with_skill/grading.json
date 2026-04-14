@@ -1,0 +1,36 @@
+{
+  "expectations": [
+    {
+      "text": "Attempts getJiraIssue for WEBR-9999",
+      "passed": true,
+      "evidence": "Tools Called: getJiraIssue called twice (cloudId: aura-webr and atlassian.net). Both failed with errors — ticket not found / MCP not connected."
+    },
+    {
+      "text": "Output contains 'Error: Could not fetch WEBR-9999'",
+      "passed": true,
+      "evidence": "Error Output section: exact text 'Error: Could not fetch WEBR-9999. Reason: MCP not connected' present."
+    },
+    {
+      "text": "Output contains 'No git operations have been performed'",
+      "passed": true,
+      "evidence": "Error Output section: 'No git operations have been performed.' present exactly."
+    },
+    {
+      "text": "Zero git commands executed (no branch creation, no checkout)",
+      "passed": true,
+      "evidence": "Git Operations section: 'None — stopped at error handling. Per the skill Step 1 failure instructions: Do not touch git. Do not continue.'"
+    },
+    {
+      "text": "No branch was created or checked out",
+      "passed": true,
+      "evidence": "Confirmed — no Bash commands run, no branch created."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0,
+    "note": "Error handling remains perfect in new skill. getAccessibleAtlassianResources was denied mid-run, but skill correctly halted at the first fetch failure."
+  }
+}

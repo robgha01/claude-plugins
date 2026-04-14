@@ -1,0 +1,36 @@
+{
+  "expectations": [
+    {
+      "text": "Attempts getJiraIssue for WEBR-9999",
+      "passed": true,
+      "evidence": "getJiraIssue called with cloudId: robertghafoor.atlassian.net, issueIdOrKey: WEBR-9999 → 404 error."
+    },
+    {
+      "text": "Output contains 'Error: Could not fetch WEBR-9999'",
+      "passed": true,
+      "evidence": "Error Output section: exact text 'Error: Could not fetch WEBR-9999. Reason: Failed to fetch tenant info for cloud ID: robertghafoor.atlassian.net. Status: 404'"
+    },
+    {
+      "text": "Output contains 'No git operations have been performed'",
+      "passed": true,
+      "evidence": "Error Output section: 'No git operations have been performed.' present exactly."
+    },
+    {
+      "text": "Zero git commands executed (no branch creation, no checkout)",
+      "passed": true,
+      "evidence": "Git Operations: None — stopped at error handling."
+    },
+    {
+      "text": "No branch was created or checked out",
+      "passed": true,
+      "evidence": "Confirmed — no git operations of any kind."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0,
+    "note": "Error handling works identically in old skill. Both old and new correctly halt and print the structured error format."
+  }
+}

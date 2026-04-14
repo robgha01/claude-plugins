@@ -1,0 +1,36 @@
+{
+  "expectations": [
+    {
+      "text": "Attempts getJiraIssue for WEBR-9999",
+      "passed": true,
+      "evidence": "Transcript confirms: 'Called mcp__claude_ai_Atlassian__getJiraIssue with issueIdOrKey: WEBR-9999'"
+    },
+    {
+      "text": "Output contains 'Error: Could not fetch WEBR-9999'",
+      "passed": true,
+      "evidence": "Transcript: 'Error: Could not fetch WEBR-9999. Reason: MCP not connected'"
+    },
+    {
+      "text": "Output contains 'No git operations have been performed'",
+      "passed": true,
+      "evidence": "Transcript: 'No git operations have been performed.'"
+    },
+    {
+      "text": "Zero git commands were executed (no branch creation, no checkout)",
+      "passed": true,
+      "evidence": "Transcript: 'None. As required by the skill's error handling instructions, no git operations were performed after the fetch failure.'"
+    },
+    {
+      "text": "No branch was created or checked out in the repository",
+      "passed": true,
+      "evidence": "Transcript confirms no branch was created. No git calls of any kind."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0,
+    "note": "Error handling path works perfectly. The skill correctly stops at Step 1, prints the exact error format, and avoids all git operations. Note: in real usage the reason would be 'Ticket not found' rather than 'MCP not connected', but the error format is correct either way."
+  }
+}

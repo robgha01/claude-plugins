@@ -1,0 +1,14 @@
+{
+  "eval_id": 1,
+  "eval_name": "bug-ticket-simple-tier",
+  "prompt": "start on WEBR-696",
+  "assertions": [
+    "Announces 'Starting jira-ticket protocol for WEBR-696' at the start",
+    "Calls getJiraIssue with ticket key WEBR-696",
+    "Branch name contains WEBR-696",
+    "Branch name uses feature/ prefix (documents current behavior - bug is it should be bugfix/ for Bug type)",
+    "Tier is assessed as Simple",
+    "Prints summary table containing Ticket, Type, Branch, and Tier fields",
+    "No errors encountered during execution"
+  ]
+}

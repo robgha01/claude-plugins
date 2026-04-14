@@ -1,0 +1,41 @@
+{
+  "expectations": [
+    {
+      "text": "Announces 'Starting jira-ticket protocol for WEBR-698' at the start",
+      "passed": true,
+      "evidence": "Transcript line 4: 'Starting jira-ticket protocol for WEBR-698.'"
+    },
+    {
+      "text": "Calls getJiraIssue with ticket key WEBR-698",
+      "passed": true,
+      "evidence": "Transcript confirms MCP call attempted with issueIdOrKey: WEBR-698"
+    },
+    {
+      "text": "Branch name contains WEBR-698",
+      "passed": false,
+      "evidence": "No branch created — MCP blocked before git was reached. Eval environment limitation."
+    },
+    {
+      "text": "Tier is assessed as Complex (Story + 1 AC + unset points falls through to default - reveals tier logic gap)",
+      "passed": false,
+      "evidence": "No tier assessed — Steps 2 and 3 not executed due to MCP block."
+    },
+    {
+      "text": "Prints summary table containing Ticket, Type, Branch, and Tier fields",
+      "passed": false,
+      "evidence": "No summary printed — execution halted at Step 1."
+    },
+    {
+      "text": "Tier reason mentions unset story points or mixed signals",
+      "passed": false,
+      "evidence": "No tier reasoning produced — ticket data unavailable."
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 4,
+    "total": 6,
+    "pass_rate": 0.33,
+    "note": "4 failures are eval environment limitations. The tier logic gap (Story+1AC+unset points defaulting to Complex) is a real bug confirmed by static analysis but could not be tested live."
+  }
+}

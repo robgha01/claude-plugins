@@ -1,0 +1,51 @@
+{
+  "expectations": [
+    {
+      "text": "Announces 'Starting jira-ticket protocol for WEBR-698' at the start",
+      "passed": true,
+      "evidence": "Agent announced 'Starting jira-ticket protocol for WEBR-698.' as first output."
+    },
+    {
+      "text": "Calls getJiraIssue with ticket key WEBR-698",
+      "passed": true,
+      "evidence": "Jira fetch succeeded via comprend.atlassian.net. Ticket data retrieved."
+    },
+    {
+      "text": "Checks for uncommitted changes before branching",
+      "passed": false,
+      "evidence": "Old skill has no Step 2a uncommitted changes guard. Agent went directly to branch search without running git status."
+    },
+    {
+      "text": "Branch name uses feature/ prefix",
+      "passed": true,
+      "evidence": "Branch: feature/WEBR-698-not-a-work-item-just-for-testing-claude. Story type uses feature/ in both old and new skill."
+    },
+    {
+      "text": "Branch name contains WEBR-698",
+      "passed": true,
+      "evidence": "Branch name: feature/WEBR-698-not-a-work-item-just-for-testing-claude"
+    },
+    {
+      "text": "Prints summary table with Ticket, Type, Branch, and Tier fields",
+      "passed": true,
+      "evidence": "Summary printed with Ticket, Type, Branch, Tier fields."
+    },
+    {
+      "text": "Calls getTransitionsForJiraIssue and transitionJiraIssue to transition ticket to In Progress",
+      "passed": false,
+      "evidence": "Old skill has no Step 2h (Jira transition). Transition not attempted at all."
+    },
+    {
+      "text": "Tier assessment correctly reflects ticket data (Simple for low-AC/unset-points Story, not defaulting to Complex)",
+      "passed": false,
+      "evidence": "Tier assessed as COMPLEX via fallback rule. Old skill logic: Story + 1 AC (not 3-5 for Medium) + unset points → no rule fires → falls through to default Complex. New skill added Simple rule for Story+low-AC+unset."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 3,
+    "total": 8,
+    "pass_rate": 0.625,
+    "note": "3 failures confirm exactly the 3 improvements made: uncommitted changes guard, Jira transition, and tier logic fix (Story+1AC+unset now Simple not Complex)."
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "tool_calls": {
+    "Bash": 1,
+    "Read": 0,
+    "mcp__claude_ai_Atlassian__getJiraIssue": 0
+  },
+  "total_tool_calls": 4,
+  "total_steps": 4,
+  "errors_encountered": 2
+}

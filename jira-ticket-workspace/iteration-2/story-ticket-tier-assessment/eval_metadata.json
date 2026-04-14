@@ -1,0 +1,15 @@
+{
+  "eval_id": 2,
+  "eval_name": "story-ticket-tier-assessment",
+  "prompt": "let's work on WEBR-698",
+  "assertions": [
+    "Announces 'Starting jira-ticket protocol for WEBR-698' at the start",
+    "Calls getJiraIssue with ticket key WEBR-698",
+    "Checks for uncommitted changes before branching",
+    "Branch name uses feature/ prefix",
+    "Branch name contains WEBR-698",
+    "Prints summary table with Ticket, Type, Branch, and Tier fields",
+    "Calls getTransitionsForJiraIssue and transitionJiraIssue to transition ticket to In Progress",
+    "Tier assessment correctly reflects ticket data (Simple for low-AC/unset-points Story, not defaulting to Complex)"
+  ]
+}

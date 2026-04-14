@@ -1,0 +1,15 @@
+{
+  "eval_id": 1,
+  "eval_name": "bug-ticket-simple-tier",
+  "prompt": "start on WEBR-696",
+  "assertions": [
+    "Announces 'Starting jira-ticket protocol for WEBR-696' at the start",
+    "Calls getJiraIssue (mcp__claude_ai_Atlassian__getJiraIssue) with ticket key WEBR-696",
+    "Checks for uncommitted changes with git status before branching",
+    "Branch name uses bugfix/ prefix (not feature/) because issue type is Bug",
+    "Branch name contains WEBR-696",
+    "Tier is assessed as Simple",
+    "Prints summary table with Ticket, Type, Branch, and Tier fields",
+    "Calls getTransitionsForJiraIssue and transitionJiraIssue to transition ticket to In Progress"
+  ]
+}

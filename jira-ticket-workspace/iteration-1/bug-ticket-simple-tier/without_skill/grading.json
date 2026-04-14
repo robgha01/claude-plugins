@@ -1,0 +1,46 @@
+{
+  "expectations": [
+    {
+      "text": "Announces 'Starting jira-ticket protocol for WEBR-696' at the start",
+      "passed": false,
+      "evidence": "No announcement made — baseline has no skill guidance."
+    },
+    {
+      "text": "Calls getJiraIssue with ticket key WEBR-696",
+      "passed": false,
+      "evidence": "MCP call blocked by permission. Agent could not proceed."
+    },
+    {
+      "text": "Branch name contains WEBR-696",
+      "passed": false,
+      "evidence": "No branch created."
+    },
+    {
+      "text": "Branch name uses feature/ prefix",
+      "passed": false,
+      "evidence": "No branch created."
+    },
+    {
+      "text": "Tier is assessed as Simple",
+      "passed": false,
+      "evidence": "No tier assessed — no ticket data."
+    },
+    {
+      "text": "Prints summary table containing Ticket, Type, Branch, and Tier fields",
+      "passed": false,
+      "evidence": "No structured output — baseline has no concept of a summary table."
+    },
+    {
+      "text": "No errors encountered during execution",
+      "passed": false,
+      "evidence": "Blocked by permissions at every step."
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 7,
+    "total": 7,
+    "pass_rate": 0.0,
+    "note": "Baseline produced no useful output. Without skill guidance, Claude had no structured workflow to fall back on."
+  }
+}

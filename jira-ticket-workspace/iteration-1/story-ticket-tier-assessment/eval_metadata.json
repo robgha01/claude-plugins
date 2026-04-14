@@ -1,0 +1,13 @@
+{
+  "eval_id": 2,
+  "eval_name": "story-ticket-tier-assessment",
+  "prompt": "let's work on WEBR-698",
+  "assertions": [
+    "Announces 'Starting jira-ticket protocol for WEBR-698' at the start",
+    "Calls getJiraIssue with ticket key WEBR-698",
+    "Branch name contains WEBR-698",
+    "Tier is assessed as Complex (Story + 1 AC + unset points falls through to default - reveals tier logic gap)",
+    "Prints summary table containing Ticket, Type, Branch, and Tier fields",
+    "Tier reason mentions unset story points or mixed signals"
+  ]
+}

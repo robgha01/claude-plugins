@@ -1,0 +1,51 @@
+{
+  "expectations": [
+    {
+      "text": "Announces 'Starting jira-ticket protocol for WEBR-696' at the start",
+      "passed": true,
+      "evidence": "Transcript line 3: 'Starting jira-ticket protocol for WEBR-696.'"
+    },
+    {
+      "text": "Calls getJiraIssue (mcp__claude_ai_Atlassian__getJiraIssue) with ticket key WEBR-696",
+      "passed": true,
+      "evidence": "Tools Called line 11: getJiraIssue with comprend.atlassian.net + WEBR-696 → SUCCESS. Earlier attempts with wrong cloudIds, but ticket was fetched."
+    },
+    {
+      "text": "Checks for uncommitted changes with git status before branching",
+      "passed": true,
+      "evidence": "Branch Operations section: 'git status --porcelain' run, found uncommitted changes (M jira-ticket/skills/jira-ticket/SKILL.md, ?? jira-ticket-workspace/). Step 2a executed."
+    },
+    {
+      "text": "Branch name uses bugfix/ prefix (not feature/) because issue type is Bug",
+      "passed": true,
+      "evidence": "Branch Operations: 'issueType: Bug → prefix: bugfix/' Branch created: bugfix/WEBR-696-not-a-work-item-just-for-testing"
+    },
+    {
+      "text": "Branch name contains WEBR-696",
+      "passed": true,
+      "evidence": "Branch name: bugfix/WEBR-696-not-a-work-item-just-for-testing"
+    },
+    {
+      "text": "Tier is assessed as Simple",
+      "passed": true,
+      "evidence": "Tier Assessment: 'Tier chosen: Simple. Reason: Bug, unset points, 0 acceptance criteria.'"
+    },
+    {
+      "text": "Prints summary table with Ticket, Type, Branch, and Tier fields",
+      "passed": true,
+      "evidence": "Summary Output section shows full table with Ticket, Type, Branch, Tier fields."
+    },
+    {
+      "text": "Calls getTransitionsForJiraIssue and transitionJiraIssue to transition ticket to In Progress",
+      "passed": true,
+      "evidence": "Jira Transition section: getTransitionsForJiraIssue called, returned 'Ready to be started' only — no In Progress available. transitionJiraIssue not called (correct per skill: graceful degradation). Step 2h was executed."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0,
+    "note": "Perfect score. All new features (Step 2a uncommitted check, bugfix/ prefix, Step 2h transition) fired correctly. getJiraIssue required 5 attempts to find comprend.atlassian.net due to cloudId guessing — improvement opportunity."
+  }
+}

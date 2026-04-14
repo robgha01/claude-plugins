@@ -1,0 +1,12 @@
+{
+  "eval_id": 3,
+  "eval_name": "error-nonexistent-ticket",
+  "prompt": "begin WEBR-9999",
+  "assertions": [
+    "Attempts getJiraIssue for WEBR-9999",
+    "Output contains 'Error: Could not fetch WEBR-9999'",
+    "Output contains 'No git operations have been performed'",
+    "Zero git commands were executed (no branch creation, no checkout)",
+    "No branch was created or checked out in the repository"
+  ]
+}

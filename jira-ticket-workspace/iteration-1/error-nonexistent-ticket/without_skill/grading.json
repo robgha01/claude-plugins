@@ -1,0 +1,36 @@
+{
+  "expectations": [
+    {
+      "text": "Attempts getJiraIssue for WEBR-9999",
+      "passed": false,
+      "evidence": "MCP blocked. Could not attempt lookup."
+    },
+    {
+      "text": "Output contains 'Error: Could not fetch WEBR-9999'",
+      "passed": false,
+      "evidence": "No structured error output. Agent said it was blocked by permissions."
+    },
+    {
+      "text": "Output contains 'No git operations have been performed'",
+      "passed": false,
+      "evidence": "No structured output at all."
+    },
+    {
+      "text": "Zero git commands were executed (no branch creation, no checkout)",
+      "passed": true,
+      "evidence": "Baseline did not run any git commands (but only because it was blocked, not due to intentional guard)."
+    },
+    {
+      "text": "No branch was created or checked out in the repository",
+      "passed": true,
+      "evidence": "No branch created."
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 3,
+    "total": 5,
+    "pass_rate": 0.4,
+    "note": "2 passes are coincidental (no git run due to being blocked, not because of intentional error handling). The with-skill run is superior: it attempted the lookup, printed the exact required error format, and explicitly stated no git ops were performed."
+  }
+}

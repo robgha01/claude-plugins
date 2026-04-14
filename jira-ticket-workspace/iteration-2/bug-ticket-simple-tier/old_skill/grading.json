@@ -1,0 +1,51 @@
+{
+  "expectations": [
+    {
+      "text": "Announces 'Starting jira-ticket protocol for WEBR-696' at the start",
+      "passed": true,
+      "evidence": "Agent announced 'Starting jira-ticket protocol for WEBR-696.' as first output."
+    },
+    {
+      "text": "Calls getJiraIssue (mcp__claude_ai_Atlassian__getJiraIssue) with ticket key WEBR-696",
+      "passed": true,
+      "evidence": "Jira fetch succeeded via comprend.atlassian.net. Ticket data retrieved successfully."
+    },
+    {
+      "text": "Checks for uncommitted changes with git status before branching",
+      "passed": false,
+      "evidence": "Old skill has no Step 2a (uncommitted changes guard). Agent went directly to branch search without running git status --porcelain."
+    },
+    {
+      "text": "Branch name uses bugfix/ prefix (not feature/) because issue type is Bug",
+      "passed": false,
+      "evidence": "Old skill always uses feature/ prefix. Branch created: feature/WEBR-696-not-a-work-item-just-for-testing-claude (not bugfix/)."
+    },
+    {
+      "text": "Branch name contains WEBR-696",
+      "passed": true,
+      "evidence": "Branch name: feature/WEBR-696-not-a-work-item-just-for-testing-claude"
+    },
+    {
+      "text": "Tier is assessed as Simple",
+      "passed": true,
+      "evidence": "Tier assessed as Simple: Bug, 0 ACs, unset points."
+    },
+    {
+      "text": "Prints summary table with Ticket, Type, Branch, and Tier fields",
+      "passed": true,
+      "evidence": "Summary printed with Ticket, Type, Branch, Tier fields. Correct format."
+    },
+    {
+      "text": "Calls getTransitionsForJiraIssue and transitionJiraIssue to transition ticket to In Progress",
+      "passed": false,
+      "evidence": "Old skill has no Step 2h (Jira transition). Agent confirmed 'Not attempted (not part of Steps 1-3)'."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 3,
+    "total": 8,
+    "pass_rate": 0.625,
+    "note": "3 failures are exactly the 3 features added by the new skill: uncommitted changes guard, bugfix/ prefix for Bug tickets, and Jira status transition."
+  }
+}

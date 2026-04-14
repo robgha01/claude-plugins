@@ -5,8 +5,6 @@ argument-hint: <TICKET-ID>
 allowed-tools:
   - Bash
   - Read
-  - Edit
-  - Write
   - Grep
   - Glob
 ---
@@ -20,8 +18,6 @@ allowed-tools:
 ## Step 1 — Jira Lookup
 
 Fetch the ticket using the Atlassian MCP tool `getJiraIssue`. Pass the ticket ID exactly as provided (e.g., `SWBPAY-1234`).
-
-**Finding the cloud ID:** `getJiraIssue` requires an Atlassian cloud ID. Call `getAccessibleAtlassianResources` first to discover the correct cloud ID for the user's Jira instance. If that tool is unavailable or denied, infer the company name from the project key prefix and try `<company>.atlassian.net` (e.g., project key `WEBR-696` → try `comprend.atlassian.net` or similar).
 
 Extract and record:
 - `title`
@@ -47,29 +43,7 @@ Do not touch git. Do not continue.
 
 ## Step 2 — Branch Check & Create
 
-### 2a. Check for uncommitted changes
-
-Run:
-```bash
-git status --porcelain
-```
-
-If there are uncommitted changes, print a warning and ask before proceeding:
-
-```
-Warning: you have uncommitted changes on <current-branch>.
-Switching branches may carry these changes across or fail.
-  [S] Stash them and continue
-  [C] Continue anyway (unstaged changes will follow)
-  [X] Stop — I'll commit or stash manually
-```
-
-Wait for the user's choice:
-- `[S]` → run `git stash`, then continue
-- `[C]` → continue without stashing
-- `[X]` → stop here, print "No branch operations performed."
-
-### 2c. Search for existing branches
+### 2a. Search for existing branches
 
 Run both commands and collect all matching branch names:
 
@@ -80,7 +54,7 @@ git ls-remote --heads origin "*<TICKET-ID>*" | awk '{print $2}' | sed 's|refs/he
 
 Deduplicate the results (same branch may appear in both).
 
-### 2d. Check authorship of each found branch
+### 2b. Check authorship of each found branch
 
 For each found branch name, run:
 
@@ -96,25 +70,20 @@ git config user.name
 
 Compare. A branch "belongs to" the current user if the last committer name matches `git config user.name`.
 
-### 2e. Apply decision table
+### 2c. Apply decision table
 
 | Situation | Action |
 |---|---|
-| No matching branch anywhere | Create `<prefix>/<TICKET-ID>-<short-title>` (see 2f) |
+| No matching branch anywhere | Create `feature/<TICKET-ID>-<short-title>` (see 2d) |
 | Current user's branch exists locally | `git checkout <branch>` |
 | Current user's branch exists on remote only | `git checkout --track origin/<branch>` |
-| Only other users' branches exist | Show conflict prompt (2g), wait for choice |
+| Only other users' branches exist | Show conflict prompt (2e), wait for choice |
 | Branches from current user AND others | Use current user's branch, mention others exist in summary |
 | Current user has multiple matching branches | List all, ask which to use |
 
-### 2f. Branch naming (when creating new)
+### 2d. Branch naming (when creating new)
 
-Format: `<prefix>/<TICKET-ID>-<short-title>`
-
-Choose prefix by issue type:
-- `Bug` → `bugfix/`
-- `Task` → `chore/`
-- `Story`, `Epic`, or anything else → `feature/`
+Format: `feature/<TICKET-ID>-<short-title>`
 
 Rules for `<short-title>`:
 - Source: ticket `title` field from Step 1
@@ -125,20 +94,16 @@ Rules for `<short-title>`:
 - Truncate to 40 characters at the nearest word boundary
 
 Example:
-- Title: `"Add CTA block with icon support"`, type Story
+- Title: `"Add CTA block with icon support"`
 - Short title: `add-cta-block-with-icon-support`
 - Branch: `feature/SWBPAY-1234-add-cta-block-with-icon-support`
 
-Example:
-- Title: `"Null pointer on login"`, type Bug
-- Branch: `bugfix/SWBPAY-1235-null-pointer-on-login`
-
 Create the branch:
 ```bash
-git checkout -b <prefix>/<TICKET-ID>-<short-title>
+git checkout -b feature/<TICKET-ID>-<short-title>
 ```
 
-### 2g. Conflict prompt (when only other users' branches exist)
+### 2e. Conflict prompt (when only other users' branches exist)
 
 Print this and wait for user input before proceeding:
 
@@ -151,22 +116,12 @@ Found existing branches for <TICKET-ID>:
 Create your own branch, or work from one of these?
   [1] Use <author-1>'s branch
   [2] Use <author-2>'s branch
-  [N] Create my own: <prefix>/<TICKET-ID>-<short-title>
+  [N] Create my own: feature/<TICKET-ID>-<short-title>
 ```
 
 Act on the user's choice:
 - `[1]` or `[2]` etc. → `git checkout <chosen-branch>` (add `--track origin/` prefix if remote-only)
-- `[N]` or "create my own" → proceed with 2f
-
-### 2h. Transition ticket to In Progress
-
-After the branch is checked out or created, transition the Jira ticket to "In Progress" using `transitionJiraIssue`.
-
-1. Call `getTransitionsForJiraIssue` to get the available transitions for this ticket.
-2. Find the transition whose name matches "In Progress" (case-insensitive).
-3. Call `transitionJiraIssue` with that transition ID.
-
-If the MCP call fails or the "In Progress" transition doesn't exist, note it in the summary but do not stop — branch setup already succeeded.
+- `[N]` or "create my own" → proceed with 2d
 
 ---
 
@@ -178,13 +133,11 @@ Evaluate in order — first matching rule wins:
 
 | Tier | Rule |
 |---|---|
-| **Complex** | issueType is Epic, OR storyPoints ≥ 5, OR acceptance criteria count ≥ 5 |
-| **Simple** | issueType is Bug or Task, AND ≤ 2 acceptance criteria, AND storyPoints ≤ 2 (or unset) |
-| **Simple** | issueType is Story, AND ≤ 2 acceptance criteria, AND storyPoints ≤ 2 (or unset) |
-| **Medium** | issueType is Story, AND 3–4 acceptance criteria, OR storyPoints is 3 or 4 |
-| **Complex** | Fallback for anything not matched above (missing/vague description with Epic-like scope) |
+| **Complex** | issueType is Epic, OR storyPoints ≥ 5, OR acceptance criteria count ≥ 5, OR description is vague/missing |
+| **Medium** | issueType is Story, AND 3–5 acceptance criteria, AND storyPoints is 3 or 4 |
+| **Simple** | issueType is Bug or Task, AND ≤2 acceptance criteria, AND storyPoints ≤ 2 (or unset for a clearly small task) |
 
-Rationale: a Story with few acceptance criteria and no story points is a lightweight ticket — it should be Simple, not Complex. The old default-to-Complex on mixed signals was over-cautious and added unnecessary process overhead to straightforward work.
+When story points are unset and type/AC signals are mixed, default to **Complex** (safer to over-process than under-process).
 
 ### 3b. Print summary
 

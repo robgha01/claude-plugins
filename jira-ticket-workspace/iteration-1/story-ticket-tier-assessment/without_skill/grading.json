@@ -1,0 +1,41 @@
+{
+  "expectations": [
+    {
+      "text": "Announces 'Starting jira-ticket protocol for WEBR-698' at the start",
+      "passed": false,
+      "evidence": "No announcement — baseline has no skill to define this."
+    },
+    {
+      "text": "Calls getJiraIssue with ticket key WEBR-698",
+      "passed": false,
+      "evidence": "MCP blocked, could not proceed."
+    },
+    {
+      "text": "Branch name contains WEBR-698",
+      "passed": false,
+      "evidence": "No branch created."
+    },
+    {
+      "text": "Tier is assessed as Complex",
+      "passed": false,
+      "evidence": "No tier assessed."
+    },
+    {
+      "text": "Prints summary table containing Ticket, Type, Branch, and Tier fields",
+      "passed": false,
+      "evidence": "No structured output produced."
+    },
+    {
+      "text": "Tier reason mentions unset story points or mixed signals",
+      "passed": false,
+      "evidence": "No output at all."
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 6,
+    "total": 6,
+    "pass_rate": 0.0,
+    "note": "Baseline produced no useful output."
+  }
+}
