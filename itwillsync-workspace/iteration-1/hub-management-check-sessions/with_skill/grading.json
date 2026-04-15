@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Response includes `npx itwillsync hub info` for retrieving the dashboard URL",
+      "passed": true,
+      "evidence": "Output: 'npx itwillsync hub info' — present with correct description"
+    },
+    {
+      "text": "Response includes `npx itwillsync hub status` for listing session uptimes",
+      "passed": true,
+      "evidence": "Output: 'npx itwillsync hub status' — present with correct description"
+    },
+    {
+      "text": "Response explains what each command does differently — not just listing both without distinguishing them",
+      "passed": true,
+      "evidence": "Output clearly states: 'hub info prints the dashboard URL and QR code so you can reconnect' vs 'hub status lists all active sessions with their uptime'"
+    },
+    {
+      "text": "Response does NOT tell the user to restart itwillsync to find the URL",
+      "passed": true,
+      "evidence": "No restart advice given anywhere in the response"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

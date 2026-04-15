@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Response includes the exact command `npx itwillsync claude` (not a generic install-first variant)",
+      "passed": true,
+      "evidence": "Output line: 'npx itwillsync claude' — correct command, no global install step"
+    },
+    {
+      "text": "Response mentions the QR code and explains the user should scan it with their phone",
+      "passed": true,
+      "evidence": "Output: 'Print a QR code' in itwillsync steps, then 'Open your phone's camera and point it at the QR code in the terminal'"
+    },
+    {
+      "text": "Response makes clear no app needs to be installed on the phone (browser-only)",
+      "passed": true,
+      "evidence": "Output: 'No app install required' — explicit statement"
+    },
+    {
+      "text": "Response does NOT recommend an unrelated tool (ngrok, SSH tunnel, VSCode remote, etc.) as the primary answer",
+      "passed": true,
+      "evidence": "Only itwillsync commands used throughout; no alternative tools promoted"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

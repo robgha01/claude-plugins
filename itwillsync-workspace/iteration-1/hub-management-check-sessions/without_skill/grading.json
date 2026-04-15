@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Response includes `npx itwillsync hub info` for retrieving the dashboard URL",
+      "passed": false,
+      "evidence": "Response admits no knowledge of itwillsync. Suggests 'itwillsync --help' and 'itwillsync status' as guesses — neither is correct"
+    },
+    {
+      "text": "Response includes `npx itwillsync hub status` for listing session uptimes",
+      "passed": false,
+      "evidence": "Response guesses 'itwillsync status' without 'hub' subcommand, and without npx prefix"
+    },
+    {
+      "text": "Response explains what each command does differently — not just listing both without distinguishing them",
+      "passed": false,
+      "evidence": "Both commands guessed are wrong; no meaningful distinction possible"
+    },
+    {
+      "text": "Response does NOT tell the user to restart itwillsync to find the URL",
+      "passed": true,
+      "evidence": "No restart advice given — response honestly admits ignorance and suggests docs/help flags"
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 3,
+    "total": 4,
+    "pass_rate": 0.25
+  }
+}

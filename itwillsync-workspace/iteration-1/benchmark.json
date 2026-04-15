@@ -1,0 +1,175 @@
+{
+  "metadata": {
+    "skill_name": "itwillsync",
+    "skill_path": "C:/Workspace/claude-plugins/itwillsync/skills/itwillsync",
+    "executor_model": "claude-sonnet-4-6",
+    "timestamp": "2026-04-15T00:00:00Z",
+    "evals_run": ["basic-claude-sync-local-wifi", "tailscale-remote-aider-sync", "hub-management-check-sessions"],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "eval_name": "basic-claude-sync-local-wifi",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 24.5,
+        "tokens": 14649,
+        "tool_calls": 2,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Response includes the exact command `npx itwillsync claude`", "passed": true, "evidence": "Present verbatim in output"},
+        {"text": "Response mentions QR code and explains scanning with phone", "passed": true, "evidence": "Explicit QR scan instructions given"},
+        {"text": "Response makes clear no app install needed on phone", "passed": true, "evidence": "'No app install required' — explicit"},
+        {"text": "Response does NOT recommend unrelated tool as primary answer", "passed": true, "evidence": "Only itwillsync commands used throughout"}
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "basic-claude-sync-local-wifi",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.25,
+        "passed": 1,
+        "failed": 3,
+        "total": 4,
+        "time_seconds": 45.8,
+        "tokens": 15709,
+        "tool_calls": 4,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Response includes the exact command `npx itwillsync claude`", "passed": false, "evidence": "Recommends tmux+ttyd instead — no itwillsync knowledge"},
+        {"text": "Response mentions QR code and explains scanning with phone", "passed": false, "evidence": "No QR code mentioned"},
+        {"text": "Response makes clear no app install needed on phone", "passed": true, "evidence": "ttyd approach uses phone browser — no app install implied"},
+        {"text": "Response does NOT recommend unrelated tool as primary answer", "passed": false, "evidence": "tmux+ttyd is the primary recommendation, not itwillsync"}
+      ],
+      "notes": ["Without skill, model falls back to generic tmux+ttyd/tmate/SSH solutions — technically valid for terminal sharing but not using itwillsync"]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "tailscale-remote-aider-sync",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 19.2,
+        "tokens": 13715,
+        "tool_calls": 2,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Response uses `aider` as agent argument", "passed": true, "evidence": "'npx itwillsync aider --tailscale' — correct agent"},
+        {"text": "Response includes the `--tailscale` flag", "passed": true, "evidence": "--tailscale present in command"},
+        {"text": "Response provides full command: `npx itwillsync aider --tailscale`", "passed": true, "evidence": "Exact full command present"},
+        {"text": "Response explains WHY --tailscale works outside home network", "passed": true, "evidence": "'over your Tailscale VPN instead of just local WiFi, so you can reach it from anywhere'"}
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "tailscale-remote-aider-sync",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.25,
+        "passed": 1,
+        "failed": 3,
+        "total": 4,
+        "time_seconds": 28.7,
+        "tokens": 14190,
+        "tool_calls": 4,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Response uses `aider` as agent argument", "passed": false, "evidence": "Uses `aider --browser --host 0.0.0.0 --port 8080` — Aider's own CLI, not itwillsync"},
+        {"text": "Response includes the `--tailscale` flag", "passed": false, "evidence": "No --tailscale; manually uses tailscale IP with --host"},
+        {"text": "Response provides full command: `npx itwillsync aider --tailscale`", "passed": false, "evidence": "Different tool and command entirely"},
+        {"text": "Response explains WHY --tailscale works outside home network", "passed": true, "evidence": "Explains Tailscale handles secure tunnel over internet — conceptually correct for different tool"}
+      ],
+      "notes": ["Without skill, model uses Aider's native --browser mode with Tailscale IP — reasonable general answer, but wrong tool"]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "hub-management-check-sessions",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 13.0,
+        "tokens": 13497,
+        "tool_calls": 2,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Response includes `npx itwillsync hub info` for dashboard URL", "passed": true, "evidence": "Present with correct description"},
+        {"text": "Response includes `npx itwillsync hub status` for session uptimes", "passed": true, "evidence": "Present with correct description"},
+        {"text": "Response explains what each command does differently", "passed": true, "evidence": "hub info = URL+QR, hub status = uptime list — clearly distinguished"},
+        {"text": "Response does NOT tell user to restart itwillsync to find URL", "passed": true, "evidence": "No restart advice anywhere in response"}
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "hub-management-check-sessions",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.25,
+        "passed": 1,
+        "failed": 3,
+        "total": 4,
+        "time_seconds": 24.2,
+        "tokens": 13703,
+        "tool_calls": 4,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Response includes `npx itwillsync hub info` for dashboard URL", "passed": false, "evidence": "Guesses 'itwillsync --help' and 'itwillsync status' — neither is correct"},
+        {"text": "Response includes `npx itwillsync hub status` for session uptimes", "passed": false, "evidence": "Guesses 'itwillsync status' without hub subcommand or npx prefix"},
+        {"text": "Response explains what each command does differently", "passed": false, "evidence": "Both guessed commands are wrong; honest admission of no knowledge"},
+        {"text": "Response does NOT tell user to restart itwillsync to find URL", "passed": true, "evidence": "No restart advice — suggests docs/help flags instead"}
+      ],
+      "notes": ["Without skill, model honestly admits no knowledge of itwillsync and falls back to generic subcommand guesses"]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {"mean": 1.0, "stddev": 0.0, "min": 1.0, "max": 1.0},
+      "time_seconds": {"mean": 18.9, "stddev": 4.8, "min": 13.0, "max": 24.5},
+      "tokens": {"mean": 13954, "stddev": 475, "min": 13497, "max": 14649}
+    },
+    "without_skill": {
+      "pass_rate": {"mean": 0.25, "stddev": 0.0, "min": 0.25, "max": 0.25},
+      "time_seconds": {"mean": 32.9, "stddev": 8.9, "min": 24.2, "max": 45.8},
+      "tokens": {"mean": 14534, "stddev": 799, "min": 13703, "max": 15709}
+    },
+    "delta": {
+      "pass_rate": "+0.75",
+      "time_seconds": "-14.0",
+      "tokens": "-580"
+    }
+  },
+  "notes": [
+    "Skill delivers 100% pass rate vs 25% baseline — a 75-point improvement across all 3 evals",
+    "Without skill, model gives technically reasonable but wrong-tool answers (tmux+ttyd, aider --browser) on evals 1 and 2",
+    "Without skill, eval 3 is the most dramatic failure: model honestly admits no itwillsync knowledge and falls back to generic guesses",
+    "Skill runs are FASTER (avg 18.9s vs 32.9s) — model with skill goes direct to the right answer with less exploration",
+    "The 'no-hallucinated-tool' and 'correct-command' assertions are the most discriminating — all fail without skill, all pass with skill",
+    "The 'no-restart-advice' and 'no-app-install' assertions pass in both configs — low discriminating value, consider dropping or replacing with stronger variants"
+  ]
+}

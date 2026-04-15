@@ -1,0 +1,42 @@
+Starting itwillsync — syncing Claude Code to your mobile device.
+
+Since you're on the same WiFi as your laptop, this is the simplest setup — no extra configuration needed.
+
+RUN THIS COMMAND
+
+Open a terminal and run:
+
+    npx itwillsync claude
+
+That's it. itwillsync will:
+1. Start a local hub daemon (if not already running)
+2. Wrap your Claude Code session in a PTY
+3. Print a QR code and a dashboard URL in the terminal (e.g. http://192.168.x.x:3000)
+4. Show a dashboard listing all active sessions
+
+CONNECT FROM YOUR PHONE
+
+- Open your phone's camera and point it at the QR code in the terminal
+- Tap the link that appears — it opens a live terminal view in your mobile browser
+- No app install required
+
+The session is encrypted with a per-session auth token embedded in the QR code. Scanning the code is all the pairing you need.
+
+FIRST TIME ONLY (OPTIONAL)
+
+    npx itwillsync setup
+
+USEFUL FOLLOW-UP COMMANDS
+
+    npx itwillsync hub info    # See dashboard URL and QR again
+    npx itwillsync hub status  # List active sessions with uptime
+    npx itwillsync hub stop    # Stop all sessions and shut down hub
+
+TROUBLESHOOTING
+
+- Phone can't connect: ensure both devices are on the same WiFi network
+- Port already in use: use --port, e.g. npx itwillsync claude --port 4000
+- Windows firewall prompt: approve it on first run
+- QR not visible: copy the URL printed below the QR and open it manually on your phone
+
+Note: the hub daemon does not auto-start on reboot — re-run the command next time you need it.

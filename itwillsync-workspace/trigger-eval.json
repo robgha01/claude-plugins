@@ -1,0 +1,82 @@
+[
+  {
+    "query": "hey i'm working from home and want to keep an eye on my claude code session from my phone while i make lunch. how do i get the terminal on my iphone?",
+    "should_trigger": true
+  },
+  {
+    "query": "i use aider a lot and just realized i could monitor it from my android while i'm away from my desk -- is there a way to do that over wifi?",
+    "should_trigger": true
+  },
+  {
+    "query": "what's the command to sync my claude code to my phone again, i always forget",
+    "should_trigger": true
+  },
+  {
+    "query": "i'm setting up my dev environment and want mobile access to my coding agents. someone mentioned itwillsync, how does it work?",
+    "should_trigger": true
+  },
+  {
+    "query": "i leave my goose agent running overnight and want to check on it from bed without walking to my laptop. what do i need?",
+    "should_trigger": true
+  },
+  {
+    "query": "heading out but my aider session is mid-run. is there a way to watch it from my phone and approve prompts remotely? i have tailscale installed",
+    "should_trigger": true
+  },
+  {
+    "query": "i already started itwillsync but now i'm in a new terminal tab and can't find the url to the mobile dashboard",
+    "should_trigger": true
+  },
+  {
+    "query": "can i get a live view of my terminal on my phone's browser without installing any app on the phone?",
+    "should_trigger": true
+  },
+  {
+    "query": "want to monitor my ai coding agent from my phone during my commute, prefer something that doesn't route through the cloud",
+    "should_trigger": true
+  },
+  {
+    "query": "npx itwillsync aider shows a QR code but my phone camera won't scan it. what should i do?",
+    "should_trigger": true
+  },
+  {
+    "query": "how do i set up port forwarding on my router so i can ssh into my home server from outside",
+    "should_trigger": false
+  },
+  {
+    "query": "i want to share my screen with a coworker for pair programming, what's the best screen sharing tool on mac?",
+    "should_trigger": false
+  },
+  {
+    "query": "how do i run my react native app on my actual iphone from my macbook for testing",
+    "should_trigger": false
+  },
+  {
+    "query": "set up a cloudflare tunnel for my nextjs app so my client can preview it remotely before i deploy",
+    "should_trigger": false
+  },
+  {
+    "query": "is there a way to sync my obsidian notes between my iphone and my mac automatically",
+    "should_trigger": false
+  },
+  {
+    "query": "i want to monitor my vercel deployment logs in real time, is there a dashboard or cli command for that?",
+    "should_trigger": false
+  },
+  {
+    "query": "how do i expose my local dev server to the internet so i can test incoming webhooks from stripe",
+    "should_trigger": false
+  },
+  {
+    "query": "my phone keeps dropping off my home wifi but my laptop stays connected fine, any idea why?",
+    "should_trigger": false
+  },
+  {
+    "query": "how do i use tmux to keep my ssh session alive when my connection drops",
+    "should_trigger": false
+  },
+  {
+    "query": "can i control my home assistant smart home dashboard from my phone using a self-hosted setup",
+    "should_trigger": false
+  }
+]

@@ -1,0 +1,23 @@
+{
+  "eval_id": 3,
+  "eval_name": "hub-management-check-sessions",
+  "prompt": "I've already got itwillsync running with a couple sessions. I opened a new terminal tab and I can't remember the URL to get back to the dashboard, and I also want to see how long my sessions have been alive. What commands do I run?",
+  "assertions": [
+    {
+      "id": "hub-info-present",
+      "text": "Response includes `npx itwillsync hub info` for retrieving the dashboard URL"
+    },
+    {
+      "id": "hub-status-present",
+      "text": "Response includes `npx itwillsync hub status` for listing session uptimes"
+    },
+    {
+      "id": "both-commands-distinct",
+      "text": "Response explains what each command does differently — not just listing both without distinguishing them"
+    },
+    {
+      "id": "no-restart-advice",
+      "text": "Response does NOT tell the user to restart itwillsync to find the URL (which would be wrong — hub info is the right approach)"
+    }
+  ]
+}

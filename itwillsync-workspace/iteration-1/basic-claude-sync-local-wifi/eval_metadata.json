@@ -1,0 +1,23 @@
+{
+  "eval_id": 1,
+  "eval_name": "basic-claude-sync-local-wifi",
+  "prompt": "I want to watch my Claude Code session from my phone while I'm working. I'm on the same WiFi as my laptop. How do I set this up?",
+  "assertions": [
+    {
+      "id": "correct-command",
+      "text": "Response includes the exact command `npx itwillsync claude` (not a generic install-first variant)"
+    },
+    {
+      "id": "qr-code-mentioned",
+      "text": "Response mentions the QR code and explains the user should scan it with their phone"
+    },
+    {
+      "id": "no-app-install",
+      "text": "Response makes clear no app needs to be installed on the phone (browser-only)"
+    },
+    {
+      "id": "no-hallucinated-tool",
+      "text": "Response does not recommend an unrelated tool (ngrok, SSH tunnel, VSCode remote, etc.) as the primary answer"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Response includes the exact command `npx itwillsync claude` (not a generic install-first variant)",
+      "passed": false,
+      "evidence": "Response recommends tmux+ttyd, tmate, screen, and SSH — has no knowledge of itwillsync"
+    },
+    {
+      "text": "Response mentions the QR code and explains the user should scan it with their phone",
+      "passed": false,
+      "evidence": "No QR code mentioned anywhere in the response"
+    },
+    {
+      "text": "Response makes clear no app needs to be installed on the phone (browser-only)",
+      "passed": true,
+      "evidence": "ttyd approach uses phone browser at http://ip:7681 — no app install implied"
+    },
+    {
+      "text": "Response does NOT recommend an unrelated tool (ngrok, SSH tunnel, VSCode remote, etc.) as the primary answer",
+      "passed": false,
+      "evidence": "Primary recommendation is tmux+ttyd — a valid but wrong answer since itwillsync is the intended tool"
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 3,
+    "total": 4,
+    "pass_rate": 0.25
+  }
+}

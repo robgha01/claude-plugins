@@ -1,0 +1,29 @@
+I'm not familiar with a tool called "itwillsync" — it doesn't appear in my training data as a known CLI tool, dashboard application, or service with that name.
+
+Because I have no knowledge of this tool, I cannot reliably tell you:
+
+1. The URL to access its dashboard
+2. The exact command to list or inspect active sessions and their uptime
+
+General suggestions if you're stuck:
+
+1. Check the help output of the CLI:
+   itwillsync --help
+   itwillsync help
+
+2. Look for a "status", "list", or "sessions" subcommand:
+   itwillsync status
+   itwillsync list
+   itwillsync sessions
+
+3. Check the running process for a port/URL clue:
+   ps aux | grep itwillsync        # on Linux/macOS
+   netstat -tlnp | grep itwillsync # on Linux
+
+4. Look at any config or log files itwillsync may have written, e.g.:
+   ~/.itwillsync/config
+   ~/.itwillsync/sessions
+
+5. Consult the official documentation or README for the tool at its project homepage.
+
+If you can share more context about what itwillsync is (e.g., a link to its docs or GitHub repo), I can give you a more precise answer.

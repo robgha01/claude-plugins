@@ -1,0 +1,23 @@
+{
+  "eval_id": 2,
+  "eval_name": "tailscale-remote-aider-sync",
+  "prompt": "I'm running Aider on my home desktop and I'm heading out. I use Tailscale so I can reach my machine remotely. What's the command to get my Aider session accessible on my phone even when I'm not home?",
+  "assertions": [
+    {
+      "id": "correct-agent",
+      "text": "Response uses `aider` as the agent argument, not `claude` or a generic placeholder"
+    },
+    {
+      "id": "tailscale-flag",
+      "text": "Response includes the `--tailscale` flag in the command"
+    },
+    {
+      "id": "full-command",
+      "text": "Response provides the complete assembled command: `npx itwillsync aider --tailscale`"
+    },
+    {
+      "id": "remote-vs-local-distinction",
+      "text": "Response explains WHY --tailscale is used (works outside home network / uses VPN IP, not just local WiFi)"
+    }
+  ]
+}

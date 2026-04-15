@@ -6,9 +6,9 @@ argument-hint: [claude|aider|-- <command>] [--local|--tailscale|--localhost] [--
 
 # itwillsync
 
-Sync any terminal AI coding agent to a phone or tablet over the local network — zero cloud, zero install, full privacy.
+Sync any terminal AI coding agent to a phone or tablet over the local network. Zero cloud, zero install, full privacy.
 
-**Announce at start:** "Starting itwillsync — syncing <agent> to your mobile device."
+**Announce at start:** "Starting itwillsync -- syncing <agent> to your mobile device."
 
 ---
 
@@ -20,11 +20,11 @@ Supported agents out of the box: **Claude Code**, **Aider**, **Goose**. Any shel
 
 ---
 
-## Step 1 — Determine what to sync
+## Step 1 -- Determine what to sync
 
-Ask the user (or infer from context):
+Infer the agent from context, or ask if unclear:
 
-| Want to sync | Command to run |
+| Want to sync | Command |
 |---|---|
 | Claude Code | `npx itwillsync claude` |
 | Aider | `npx itwillsync aider` |
@@ -33,22 +33,31 @@ Ask the user (or infer from context):
 
 ---
 
-## Step 2 — Choose networking mode
+## Step 2 -- Choose networking mode
 
-| Situation | Flag | Example |
+| Situation | Flag | Full example |
 |---|---|---|
-| Same WiFi network (default) | `--local` or none | `npx itwillsync claude` |
-| Remote access via Tailscale | `--tailscale` | `npx itwillsync claude --tailscale` |
+| Same WiFi network (default) | none | `npx itwillsync claude` |
+| Outside home network via Tailscale VPN | `--tailscale` | `npx itwillsync claude --tailscale` |
+| Outside home network via Cloudflare Tunnel | run `npx itwillsync setup` to configure | wizard sets it up |
 | Same machine only | `--localhost` | `npx itwillsync claude --localhost` |
 | Custom port | `--port <n>` | `npx itwillsync claude --port 4000` |
 
-If the user hasn't configured a preferred mode, run `npx itwillsync setup` first for the one-time interactive wizard.
+**When the user is NOT on the same WiFi** (away from home, on mobile data, on a different network):
+- Tailscale: add `--tailscale`. Requires Tailscale installed and running on both phone and machine.
+- Cloudflare Tunnel: run `npx itwillsync setup` and select the Cloudflare option. No VPN app needed on phone.
+
+If the user has not run setup before, offer to run it first:
+
+```bash
+npx itwillsync setup
+```
 
 ---
 
-## Step 3 — Run the command
+## Step 3 -- Run the command
 
-Run the assembled command in the terminal. Example:
+Run the assembled command directly using the Bash tool. Do not just show it -- execute it.
 
 ```bash
 npx itwillsync claude
@@ -57,19 +66,21 @@ npx itwillsync claude
 itwillsync will:
 1. Start a hub daemon (if not already running)
 2. Spawn a PTY wrapping the agent
-3. Print a QR code + dashboard URL in the terminal
-4. Display a dashboard at `http://<local-ip>:<port>` listing all active sessions
+3. Print a QR code and a dashboard URL in the terminal
+4. Show a dashboard at `http://<local-ip>:<port>` listing all active sessions
 
-The user scans the QR code with their phone camera and taps the link to open the live terminal.
+Tell the user: "Scan the QR code with your phone camera and tap the link -- it opens a live terminal in your browser. No app install needed."
+
+**Note:** the main sync command starts an interactive PTY and will run in the foreground. For non-interactive hub commands (`hub info`, `hub status`, `hub stop`), run them directly and show the output.
 
 ---
 
 ## Hub management
 
-After sessions are running, the user can manage them from another terminal:
+Run these via Bash and show the output to the user:
 
 ```bash
-# View dashboard URL and QR again
+# Show dashboard URL and QR code again
 npx itwillsync hub info
 
 # List all active sessions with uptime
@@ -86,7 +97,7 @@ npx itwillsync hub stop
 | Flag | Effect |
 |---|---|
 | `--no-qr` | Suppress QR code output (URL still printed) |
-| `--headless` | No interactive output — useful for scripting |
+| `--headless` | No interactive output -- useful for scripting |
 | `-v` / `--version` | Print version |
 | `-h` / `--help` | Print help |
 
@@ -94,7 +105,7 @@ npx itwillsync hub stop
 
 ## Configuration
 
-Settings are stored at `~/.itwillsync/config.json` (or `$ITWILLSYNC_CONFIG_DIR/config.json`). Key options:
+Settings at `~/.itwillsync/config.json` (override with `$ITWILLSYNC_CONFIG_DIR`):
 
 | Key | Default | Description |
 |---|---|---|
@@ -103,36 +114,39 @@ Settings are stored at `~/.itwillsync/config.json` (or `$ITWILLSYNC_CONFIG_DIR/c
 | `idleTimeoutMs` | 24h | Session inactivity timeout |
 | `scrollbackBufferSize` | `"10MB"` | Terminal history buffer |
 
-Run `npx itwillsync setup` to configure these interactively rather than editing JSON manually.
+Run `npx itwillsync setup` to configure interactively.
 
 ---
 
 ## Security model
 
 - Per-session random auth tokens (NaCl secretbox / XSalsa20-Poly1305 encryption)
-- QR code embeds the session token — scanning = pairing
+- QR code embeds the session token -- scanning = pairing
 - Rate-limited auth attempts
-- No cloud relay — traffic stays on your network (or Tailscale VPN)
+- No cloud relay -- traffic stays on your network (or Tailscale VPN / Cloudflare Tunnel)
 
 ---
 
 ## Quick-start cheatsheet
 
 ```bash
-# Sync Claude Code on local WiFi
+# Sync Claude Code, same WiFi
 npx itwillsync claude
 
-# Sync Aider with Tailscale (remote access)
+# Sync Aider, away from home via Tailscale
 npx itwillsync aider --tailscale
 
-# Sync a plain bash shell, custom port
+# Sync a bash shell on a custom port
 npx itwillsync -- bash --port 4000
 
-# One-time setup wizard
+# First-time setup (choose networking mode, Cloudflare Tunnel, etc.)
 npx itwillsync setup
 
 # Check what's running
 npx itwillsync hub status
+
+# Get dashboard URL + QR again
+npx itwillsync hub info
 
 # Stop everything
 npx itwillsync hub stop
@@ -144,8 +158,9 @@ npx itwillsync hub stop
 
 | Mistake | Fix |
 |---|---|
-| Phone can't connect | Ensure phone and machine are on the same WiFi. Use `--tailscale` for cross-network access. |
-| QR not visible | Add `--no-qr` was set accidentally — remove it, or copy the URL from the output |
-| Port already in use | Pass `--port <other-n>` to pick a free port |
-| Sessions lost after reboot | Hub daemon doesn't auto-start on boot — re-run the command |
-| Windows firewall blocks | First run prompts a firewall rule — approve it, or add a rule for the chosen port manually |
+| Phone can't connect on same WiFi | Ensure both devices on same network; try `--port` to use a different port |
+| Phone can't connect away from home | Add `--tailscale` (requires Tailscale on phone) or run `npx itwillsync setup` for Cloudflare Tunnel |
+| QR not visible | Remove `--no-qr` if set; or copy the URL printed below the QR code |
+| Port already in use | Pass `--port <n>` to pick a free port |
+| Sessions lost after reboot | Hub daemon does not auto-start on boot -- re-run the command |
+| Windows firewall blocks | Approve the firewall prompt on first run, or add a rule for the chosen port manually |

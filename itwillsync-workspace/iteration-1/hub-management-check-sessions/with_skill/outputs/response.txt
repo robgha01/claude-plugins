@@ -1,0 +1,12 @@
+To get back to the dashboard URL and see how long your sessions have been alive, run these two commands:
+
+1. View the dashboard URL (and QR code) again:
+
+    npx itwillsync hub info
+
+2. List all active sessions with their uptime:
+
+    npx itwillsync hub status
+
+hub info prints the dashboard URL and QR code so you can reconnect from your phone.
+hub status lists all active sessions with their uptime so you can see how long each one has been running.

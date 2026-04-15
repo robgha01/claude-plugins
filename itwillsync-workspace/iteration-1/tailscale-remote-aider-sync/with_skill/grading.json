@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Response uses `aider` as the agent argument, not `claude` or a generic placeholder",
+      "passed": true,
+      "evidence": "Output: 'npx itwillsync aider --tailscale' — correct agent"
+    },
+    {
+      "text": "Response includes the `--tailscale` flag in the command",
+      "passed": true,
+      "evidence": "Output explicitly includes --tailscale in the command"
+    },
+    {
+      "text": "Response provides the complete assembled command: `npx itwillsync aider --tailscale`",
+      "passed": true,
+      "evidence": "Output: 'npx itwillsync aider --tailscale' — exact full command present"
+    },
+    {
+      "text": "Response explains WHY --tailscale is used (works outside home network / uses VPN IP, not just local WiFi)",
+      "passed": true,
+      "evidence": "Output: 'over your Tailscale VPN instead of just local WiFi, so you can reach it from anywhere your phone has Tailscale connectivity, even when away from home'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

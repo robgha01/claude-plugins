@@ -1,0 +1,29 @@
+{
+  "skill_name": "itwillsync",
+  "evals": [
+    {
+      "id": 1,
+      "name": "basic-claude-sync-local-wifi",
+      "prompt": "I want to watch my Claude Code session from my phone while I'm working. I'm on the same WiFi as my laptop. How do I set this up?",
+      "expected_output": "Provides the exact npx itwillsync claude command, explains the QR code flow (scan with phone camera, open in browser), and notes no app install is needed on the phone.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "name": "tailscale-remote-aider-sync",
+      "prompt": "I'm running Aider on my home desktop and I'm heading out. I use Tailscale so I can reach my machine remotely. What's the command to get my Aider session accessible on my phone even when I'm not home?",
+      "expected_output": "Provides npx itwillsync aider --tailscale, explains that Tailscale mode uses the VPN IP so it works outside the home network, and optionally mentions the hub persists sessions in background.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 3,
+      "name": "hub-management-check-sessions",
+      "prompt": "I've already got itwillsync running with a couple sessions. I opened a new terminal tab and I can't remember the URL to get back to the dashboard, and I also want to see how long my sessions have been alive. What commands do I run?",
+      "expected_output": "Gives both npx itwillsync hub info (for URL + QR) AND npx itwillsync hub status (for session uptime list), clearly distinguishing what each does.",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

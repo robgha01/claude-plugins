@@ -1,0 +1,47 @@
+To access your Aider session remotely over Tailscale, you need to run Aider in a persistent terminal session and expose its web UI on your Tailscale IP. Here is the recommended approach:
+
+STEP 1: Start a persistent terminal session (so it survives your connection dropping)
+
+Use tmux or screen so the Aider session keeps running after you disconnect:
+
+    tmux new -s aider
+
+STEP 2: Launch Aider with the browser UI bound to your Tailscale IP
+
+Aider has a built-in web/browser interface. Start it like this:
+
+    aider --browser --host 0.0.0.0 --port 8080
+
+Or, to bind specifically to your Tailscale IP (more secure, replace with your actual Tailscale IP from `tailscale ip -4`):
+
+    aider --browser --host 100.x.x.x --port 8080
+
+STEP 3: Detach from tmux (optional, so it keeps running after you leave)
+
+    Ctrl+B, then D
+
+STEP 4: Access from your phone
+
+Open a browser on your phone and navigate to:
+
+    http://<your-tailscale-ip>:8080
+
+You can get your desktop's Tailscale IP by running:
+
+    tailscale ip -4
+
+SUMMARY OF THE KEY COMMAND:
+
+    aider --browser --host 0.0.0.0 --port 8080
+
+Running this inside a tmux session means:
+- Tailscale handles the secure tunnel between your phone and desktop over the internet.
+- The --browser flag enables Aider's web UI.
+- --host 0.0.0.0 makes it listen on all interfaces (including the Tailscale one).
+- tmux keeps the session alive even after you close your laptop lid or disconnect.
+
+NOTES:
+- Make sure Tailscale is running on both your desktop and phone.
+- If you have a firewall on your desktop, allow port 8080 for the Tailscale interface (usually named tailscale0 on Linux).
+- For extra security, bind to your specific Tailscale IP rather than 0.0.0.0 so the port is not exposed on other network interfaces.
+- If aider --browser is not available in your version of Aider, you can use an alternative like running aider inside a terminal that you access via a web-based terminal (e.g., ttyd or gotty), or use VS Code's Remote SSH extension over Tailscale.

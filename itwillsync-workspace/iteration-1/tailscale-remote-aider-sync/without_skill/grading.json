@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Response uses `aider` as the agent argument, not `claude` or a generic placeholder",
+      "passed": false,
+      "evidence": "Response uses `aider --browser --host 0.0.0.0 --port 8080` — Aider's own CLI flag, not itwillsync's agent argument"
+    },
+    {
+      "text": "Response includes the `--tailscale` flag in the command",
+      "passed": false,
+      "evidence": "No --tailscale flag present; instead manually uses tailscale IP with --host flag"
+    },
+    {
+      "text": "Response provides the complete assembled command: `npx itwillsync aider --tailscale`",
+      "passed": false,
+      "evidence": "Primary command is `aider --browser --host 0.0.0.0 --port 8080` via tmux — completely different tool"
+    },
+    {
+      "text": "Response explains WHY --tailscale is used (works outside home network / uses VPN IP, not just local WiFi)",
+      "passed": true,
+      "evidence": "Response explains 'Tailscale handles the secure tunnel between your phone and desktop over the internet' — conceptually correct even though for a different tool"
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 3,
+    "total": 4,
+    "pass_rate": 0.25
+  }
+}

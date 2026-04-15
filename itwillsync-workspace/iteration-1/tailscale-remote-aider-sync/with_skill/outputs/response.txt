@@ -1,0 +1,18 @@
+Starting itwillsync — syncing Aider to your mobile device.
+
+Since you use Tailscale for remote access, the command you need is:
+
+    npx itwillsync aider --tailscale
+
+Run that on your home desktop before you leave (or while Aider is already running). itwillsync will:
+
+1. Start a hub daemon and spawn a PTY for your Aider session
+2. Print a QR code and a dashboard URL reachable over your Tailscale network
+3. Let you scan the QR with your phone camera, tap the link, and get a live terminal in your mobile browser — no app install required
+
+The --tailscale flag tells itwillsync to expose the session over your Tailscale VPN instead of just local WiFi, so you can reach it from anywhere your phone has Tailscale connectivity, even when away from home.
+
+To check the session URL later: npx itwillsync hub info
+To stop everything: npx itwillsync hub stop
+
+Security note: traffic travels only over your Tailscale VPN — no cloud relay involved. Each session uses NaCl secretbox (XSalsa20-Poly1305) encryption and the QR embeds a session token for pairing.

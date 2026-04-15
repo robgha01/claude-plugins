@@ -1,0 +1,137 @@
+How to Watch Your Claude Code Session from Your Phone on the Same WiFi
+======================================================================
+
+Since Claude Code is a terminal-based CLI tool, "watching" it from your phone
+means mirroring or sharing your terminal session over your local network. Here
+are the main approaches, from simplest to most capable:
+
+----------------------------------------------------------------------
+OPTION 1: tmux + ttyd (Recommended — Browser-Based Terminal)
+----------------------------------------------------------------------
+
+This is the cleanest approach. ttyd is a small tool that serves a terminal
+session over HTTP so you can view (and optionally interact with) it in any
+browser, including your phone's.
+
+Step 1 — Install tmux (if not already installed):
+  macOS:   brew install tmux
+  Ubuntu:  sudo apt install tmux
+
+Step 2 — Install ttyd:
+  macOS:   brew install ttyd
+  Ubuntu:  sudo apt install ttyd
+  (or download a binary from https://github.com/tsl0922/ttyd/releases)
+
+Step 3 — Start a tmux session and run Claude Code inside it:
+  tmux new-session -s claude
+  claude   # or however you launch Claude Code
+
+Step 4 — In a second terminal window, expose the tmux session via ttyd:
+  ttyd -p 7681 tmux attach-session -t claude
+
+  By default, ttyd only allows read-only viewing. To allow interaction, add
+  the --writable flag (only do this on a trusted network):
+  ttyd -p 7681 --writable tmux attach-session -t claude
+
+Step 5 — Find your laptop's local IP address:
+  macOS:   ipconfig getifaddr en0   (or en1 for WiFi)
+  Windows: ipconfig  (look for "IPv4 Address" under your WiFi adapter)
+  Linux:   ip addr show  (look for the 192.168.x.x address)
+
+Step 6 — Open on your phone:
+  In your phone's browser, navigate to:
+    http://<your-laptop-ip>:7681
+  Example: http://192.168.1.42:7681
+
+You will see a live terminal in your browser showing the Claude Code session.
+The session keeps running even if you close the phone browser.
+
+
+----------------------------------------------------------------------
+OPTION 2: tmate (Instant Terminal Sharing — No Setup)
+----------------------------------------------------------------------
+
+tmate is the fastest way to get started. It creates a shared terminal session
+accessible via SSH or a web link, with no configuration needed.
+
+  Install:
+    macOS:   brew install tmate
+    Ubuntu:  sudo apt install tmate
+
+  Run:
+    tmate
+
+  tmate will print two links:
+    - An SSH command (ssh ...) for terminal access
+    - A web URL (https://tmate.io/t/...) you can open on your phone
+
+  Start Claude Code in the tmate session and share the web URL to your phone.
+
+  Note: tmate routes through tmate.io's servers by default, so it technically
+  goes outside your local network. For a fully local setup, use Option 1.
+
+
+----------------------------------------------------------------------
+OPTION 3: screen + ttyd (Alternative to tmux)
+----------------------------------------------------------------------
+
+If you prefer GNU screen over tmux, the workflow is the same — just replace
+the tmux commands:
+
+  screen -S claude
+  # Run Claude Code inside screen
+  # Then in another terminal:
+  ttyd -p 7681 screen -r claude
+
+
+----------------------------------------------------------------------
+OPTION 4: SSH into Your Laptop from Your Phone
+----------------------------------------------------------------------
+
+If you have an SSH server running on your laptop, you can SSH into it from
+your phone using a terminal app (e.g., Termius, iSH on iOS; JuiceSSH on
+Android) and then attach to an existing tmux/screen session.
+
+  On your laptop, enable SSH:
+    macOS:   System Settings > General > Sharing > Remote Login (enable it)
+    Linux:   sudo systemctl enable --now ssh
+    Windows: Settings > System > Optional Features > OpenSSH Server
+
+  On your phone, SSH in:
+    ssh your-username@192.168.1.42
+
+  Then attach to your Claude Code session:
+    tmux attach-session -t claude
+
+
+----------------------------------------------------------------------
+TIPS
+----------------------------------------------------------------------
+
+- Always run Claude Code inside tmux or screen so the session persists even
+  if your phone disconnects or you close the laptop lid.
+
+- For read-only monitoring (e.g., you just want to watch progress), the
+  ttyd approach without --writable is safest.
+
+- Make sure your laptop's firewall allows inbound connections on the port
+  you chose (e.g., 7681). On macOS, you may get a firewall prompt the first
+  time; click "Allow".
+
+- The phone and laptop must be on the same WiFi network (same subnet). If
+  your router uses network isolation (a.k.a. AP isolation), devices may not
+  be able to reach each other — check your router settings if connections fail.
+
+----------------------------------------------------------------------
+QUICK-START SUMMARY
+----------------------------------------------------------------------
+
+  # On your laptop:
+  brew install tmux ttyd          # (macOS; adjust for your OS)
+  tmux new-session -s claude
+  claude                          # start Claude Code inside tmux
+  # In another terminal tab:
+  ttyd -p 7681 tmux attach-session -t claude
+
+  # On your phone browser:
+  http://<laptop-ip>:7681
