@@ -1,28 +1,35 @@
 ---
 name: itwillsync
-description: Use when the user wants to sync a terminal AI agent (Claude Code, Aider, Goose, or any shell command) to their phone or mobile device over the local network. Triggers on phrases like "sync to phone", "monitor on mobile", "itwillsync", "watch from phone", or "access agent from mobile". Skip if the user is asking about cloud deployment or regular port forwarding.
-argument-hint: [claude|aider|-- <command>] [--local|--tailscale|--localhost] [--port <n>] [--no-qr] [--headless]
+description: Use when the user wants to sync a terminal AI agent (Claude Code, Aider, Goose, or any shell command) to their phone or mobile device over the local network. Triggers on phrases like "sync to phone", "monitor on mobile", "itwillsync", "watch from phone", "control agent from phone", "approve from phone", or "access agent from mobile". Skip if the user is asking about cloud deployment or regular port forwarding.
+argument-hint: [-- <agent>] [--local|--tailscale|--localhost] [--port <n>] [--no-qr] [--headless]
 ---
 
 # itwillsync
 
-Sync any terminal AI coding agent to a phone or tablet over the local network. Zero cloud, zero install, full privacy.
+Sync any terminal AI coding agent to a phone or tablet. Full bidirectional terminal control -- type from your phone, watch output, approve prompts. Zero cloud, zero app install.
 
 **Announce at start:** "Starting itwillsync -- syncing <agent> to your mobile device."
 
 ---
 
-## How the hub works
+## What it does
 
-itwillsync wraps the agent in a PTY session and exposes it through a hub daemon that **binds to `0.0.0.0` (all network interfaces)**. Scan the QR code to open a live, encrypted terminal view in any mobile browser. No app install required on the phone.
+itwillsync wraps the agent in a PTY, starts a local WebSocket server (binding to `0.0.0.0`), and shows a QR code. Scanning it opens a **full interactive terminal** in the phone's browser -- you can type, scroll, and control the agent from your phone just like a real terminal.
 
-Supported agents out of the box: **Claude Code**, **Aider**, **Goose**. Any shell command works via `-- <cmd>`.
+**Key capabilities:**
+- Full bidirectional terminal -- type commands from your phone
+- Attention indicator: session card **pulses red** when the agent sends a bell character (e.g. Claude Code waiting for your approval) -- you know when to pick up your phone
+- Multiple sessions: run the command in separate terminals, all sessions appear on one phone dashboard
+- Auto-reconnect if WiFi drops or phone locks
+- Connect phone, tablet, and laptop simultaneously to the same session
+
+Supported agents: **Claude Code, Aider, Goose, Codex, GitHub Copilot CLI**, any shell, any CLI tool.
 
 ---
 
 ## Step 1 -- First-time setup
 
-If this is the user's first run, offer to run the setup wizard first:
+If this is the user's first run, offer to run the setup wizard:
 
 ```bash
 npx --yes itwillsync setup
@@ -35,67 +42,66 @@ The wizard asks one question -- networking mode:
 | **Local Network** | Phone and machine are on the same WiFi |
 | **Tailscale** | Connecting from a different network via Tailscale VPN |
 
-If Tailscale is selected, the wizard checks that Tailscale is installed and running and shows the detected Tailscale IP. It saves the choice to `~/.itwillsync/config.json`.
-
-If the user has run setup before, skip to Step 2.
+If Tailscale is selected, the wizard validates the installation and shows the detected Tailscale IP. Saves choice to `~/.itwillsync/config.json`. Skip setup if user has already configured.
 
 ---
 
 ## Step 2 -- Determine what to sync
 
-Infer the agent from context, or ask if unclear:
+Infer from context or ask:
 
-| Want to sync | Command to show the user |
+| Agent | Command |
 |---|---|
-| Claude Code | `npx --yes itwillsync claude` |
-| Aider | `npx --yes itwillsync aider` |
-| Goose | `npx --yes itwillsync goose` |
+| Claude Code | `npx --yes itwillsync -- claude` |
+| Aider | `npx --yes itwillsync -- aider` |
+| Goose | `npx --yes itwillsync -- goose` |
+| Codex | `npx --yes itwillsync -- codex` |
 | Bash / shell | `npx --yes itwillsync -- bash` |
-| Any other command | `npx --yes itwillsync -- <command>` |
+| Agent with its own flags | `npx --yes itwillsync -- aider --model gpt-4` |
+
+**Syntax note:** the `--` separator separates itwillsync flags from the agent command. For simple cases `npx itwillsync claude` also works, but use `--` whenever the agent has its own flags to avoid conflicts.
 
 ---
 
 ## Step 3 -- Networking mode
 
-Choose the right flag based on the user's situation:
-
-| Situation | Flag | Full command example |
+| Situation | Flag | Example |
 |---|---|---|
-| Same WiFi as the machine | none (default) | `npx --yes itwillsync claude` |
-| Different network via Tailscale VPN | `--tailscale` | `npx --yes itwillsync claude --tailscale` |
-| Same machine only | `--localhost` | `npx --yes itwillsync claude --localhost` |
-| Custom port | `--port <n>` | `npx --yes itwillsync claude --port 4000` |
+| Same WiFi as machine | `--local` or none | `npx --yes itwillsync -- claude` |
+| Different network via Tailscale VPN | `--tailscale` | `npx --yes itwillsync --tailscale -- claude` |
+| Same machine only | `--localhost` | `npx --yes itwillsync --localhost -- claude` |
+| Custom port | `--port <n>` | `npx --yes itwillsync --port 4000 -- claude` |
 
-**Tailscale** requires Tailscale installed and running on both the machine and the phone.
+Flags go **before** `--`, agent command goes **after**.
+
+**Tailscale** requires Tailscale installed and running on both machine and phone.
 
 **Other meshnets (NordVPN Meshnet, ZeroTier, etc.):**
-The hub listens on all interfaces so it IS reachable via meshnet IPs, but itwillsync has no built-in flag for them. The workaround:
-1. Run the command without any networking flag (shows local WiFi URL)
+The hub binds to all interfaces (`0.0.0.0`) so meshnet IPs work -- but itwillsync has no built-in flag for them. Workaround:
+1. Run the command without a networking flag (shows local WiFi URL in terminal)
 2. Find the machine's meshnet IP (e.g. `nordvpn meshnet peer list`, `zerotier-cli listnetworks`)
-3. In the terminal output, copy the full URL and replace the IP with the meshnet IP -- the port and session token stay the same
-4. Open the modified URL on the phone
+3. Copy the URL from the terminal, replace only the IP with the meshnet IP -- port and token stay the same
+4. Open the modified URL on phone
 
 ---
 
-## Step 4 -- Show the command and tell the user to run it
+## Step 4 -- Show the command and have the user run it
 
-**IMPORTANT:** The main sync command starts an interactive PTY session and must be run by the user in their own terminal -- do NOT run it via the Bash tool.
-
-Show the assembled command clearly and instruct the user to run it:
+**IMPORTANT:** The main sync command is an interactive PTY -- do NOT run it via the Bash tool. Show it clearly and tell the user to run it in their own terminal.
 
 > "Run this in your terminal:
 > ```
-> npx --yes itwillsync <agent> [flags]
+> npx --yes itwillsync [flags] -- <agent>
 > ```
-> After it starts, a QR code and a URL will appear. Scan the QR with your phone camera and tap the link -- it opens a live terminal in your browser. No app install needed on the phone."
+> A QR code and URL will appear. Scan the QR with your phone camera and tap the link -- opens a live interactive terminal in your browser. No app install needed."
 
-After the user runs it, itwillsync will:
-1. Download and start the hub daemon (first run only -- takes a few seconds)
-2. Spawn a PTY wrapping the agent
-3. Print a QR code and a dashboard URL (e.g. `http://192.168.x.x:7962`)
-4. Show a live dashboard listing all active sessions
+After launching, itwillsync will:
+1. Download and start on first run (takes a few seconds via npx)
+2. Start the hub daemon in the background (if not already running)
+3. Spawn a PTY wrapping the agent
+4. Print a QR code + full dashboard URL with session token
 
-The session runs in the foreground. To manage sessions or get the URL again without interrupting, the user opens a second terminal and uses the hub commands below.
+To manage sessions or retrieve the URL later, open a second terminal and use the hub commands below.
 
 ---
 
@@ -104,15 +110,38 @@ The session runs in the foreground. To manage sessions or get the URL again with
 Run these directly and show output to the user:
 
 ```bash
-# Get dashboard URL and QR code again
+# Dashboard URL + QR code + active session count
 npx --yes itwillsync hub info
 
-# List all active sessions with uptime
+# All active sessions with name, status, uptime, port
 npx --yes itwillsync hub status
 
-# Stop all sessions and shut down the hub daemon
+# Stop hub daemon (sessions with running PIDs resume when hub restarts)
 npx --yes itwillsync hub stop
+
+# Healthcheck (useful if hub seems stuck)
+curl http://127.0.0.1:7963/api/health
 ```
+
+**Session persistence:** sessions survive hub restarts -- if the hub crashes and restarts, any session whose process is still alive reappears on the dashboard automatically (state is saved to `~/.itwillsync/sessions.json`). Sessions do NOT survive a machine reboot.
+
+---
+
+## Phone dashboard controls
+
+Once connected, each session card on the phone has four actions:
+
+| Button | What it does |
+|---|---|
+| **Open** | Full-screen interactive terminal (type from phone, full color, scrollback) |
+| **Rename** | Edit session display name inline |
+| **Info** | Toggle metadata: PID, agent, port, working directory, memory, uptime |
+| **Stop** | Terminate the session (with confirmation) |
+
+**Status indicators on each card:**
+- Green = active (output in last 30s)
+- Yellow = idle (no output for 30s+)
+- Red pulsing = **attention** -- agent sent a bell signal, needs your input
 
 ---
 
@@ -120,8 +149,8 @@ npx --yes itwillsync hub stop
 
 | Flag | Effect |
 |---|---|
-| `--no-qr` | Suppress QR code output (URL still printed) |
-| `--headless` | No interactive output -- useful for scripting |
+| `--no-qr` | Suppress QR code (URL still printed) |
+| `--headless` | No interactive output -- for scripting |
 | `-v` / `--version` | Print version |
 | `-h` / `--help` | Print help |
 
@@ -129,7 +158,7 @@ npx --yes itwillsync hub stop
 
 ## Configuration
 
-Settings at `~/.itwillsync/config.json` (override with `$ITWILLSYNC_CONFIG_DIR`). Run `npx --yes itwillsync setup` to configure interactively. Key options:
+Settings at `~/.itwillsync/config.json`. Run `npx --yes itwillsync setup` to configure interactively.
 
 | Key | Default | Description |
 |---|---|---|
@@ -137,14 +166,17 @@ Settings at `~/.itwillsync/config.json` (override with `$ITWILLSYNC_CONFIG_DIR`)
 | `maxSessions` | `20` | Max concurrent sessions |
 | `idleTimeoutMs` | 24h | Session inactivity timeout |
 | `scrollbackBufferSize` | `"10MB"` | Terminal history buffer |
+| `logRetentionDays` | `30` | Days to keep session logs |
+
+Runtime files in `~/.itwillsync/`: `hub.json`, `hub.pid`, `sessions.json`, `logs/`
 
 ---
 
-## Security model
+## Security
 
-- Per-session random auth tokens (NaCl secretbox / XSalsa20-Poly1305 encryption)
-- QR code embeds the session token -- scanning = pairing
-- Rate-limited auth attempts
+- Per-session random auth tokens (NaCl secretbox / XSalsa20-Poly1305)
+- QR code URL embeds the session token -- scanning = pairing
+- Rate limiting: 5 failed auth attempts locks IP for 60 seconds
 - No cloud relay -- traffic stays on your local network or Tailscale VPN
 
 ---
@@ -155,19 +187,23 @@ Settings at `~/.itwillsync/config.json` (override with `$ITWILLSYNC_CONFIG_DIR`)
 # First-time setup
 npx --yes itwillsync setup
 
-# Sync Claude Code, same WiFi (user runs this in their terminal)
-npx --yes itwillsync claude
+# Sync Claude Code, same WiFi (user runs in their terminal)
+npx --yes itwillsync -- claude
 
-# Sync Aider, away from home via Tailscale (user runs this)
-npx --yes itwillsync aider --tailscale
+# Sync Aider via Tailscale, away from home
+npx --yes itwillsync --tailscale -- aider
 
-# Sync a bash shell on a custom port (user runs this)
-npx --yes itwillsync -- bash --port 4000
+# Sync Aider with its own flags
+npx --yes itwillsync -- aider --model gpt-4
 
-# Hub commands (Claude can run these via Bash):
-npx --yes itwillsync hub info    # get URL + QR again
-npx --yes itwillsync hub status  # list sessions with uptime
-npx --yes itwillsync hub stop    # stop everything
+# Second agent in another terminal (both show on phone dashboard)
+npx --yes itwillsync -- goose
+
+# Hub commands (Claude can run these):
+npx --yes itwillsync hub info      # URL + QR + session count
+npx --yes itwillsync hub status    # sessions with uptime
+npx --yes itwillsync hub stop      # stop hub
+curl http://127.0.0.1:7963/api/health  # hub healthcheck
 ```
 
 ---
@@ -176,12 +212,14 @@ npx --yes itwillsync hub stop    # stop everything
 
 | Problem | Fix |
 |---|---|
-| Phone can't connect on same WiFi | Check both devices are on the same network; try `--port` if there's a firewall conflict |
-| Phone can't connect from outside home WiFi | Add `--tailscale` (needs Tailscale on phone) or use the meshnet IP workaround (see Step 3) |
-| QR won't scan | Copy the URL printed below the QR code; replace IP with meshnet IP if needed |
-| Port already in use | Pass `--port <n>` to pick a free port |
-| "npx: command not found" | Install Node.js 20+ first (https://nodejs.org) |
-| Slow first start | First run downloads the package via npx -- takes a few seconds, normal |
-| Sessions lost after reboot | Hub daemon does not auto-start on boot -- re-run the command |
-| Windows firewall prompt | Approve it on first run, or add an inbound rule for port 7962 manually |
-| Tailscale setup fails in wizard | Run `tailscale up` in a separate terminal first, then re-run setup |
+| Phone can't connect on same WiFi | Both devices must be on the same network; check router AP isolation setting |
+| Phone can't connect away from home | Add `--tailscale` (needs Tailscale on phone) or use meshnet IP workaround (Step 3) |
+| QR won't scan | Copy the URL printed below the QR; use that URL directly on phone |
+| No red pulse when Claude is waiting | The bell/attention feature requires the agent to emit a terminal bell character |
+| "npx: command not found" | Install Node.js 20+ first |
+| Slow first start | First run downloads the package -- a few seconds, normal |
+| Sessions lost after reboot | Hub and sessions don't auto-start on machine reboot -- re-run the command |
+| Hub seems stuck | Run `curl http://127.0.0.1:7963/api/health`; if no response, run `npx --yes itwillsync hub stop` then restart |
+| Windows firewall prompt | Approve on first run, or add inbound rule for the session port manually |
+| Agent has its own flags | Use `--` separator: `npx itwillsync --tailscale -- aider --model gpt-4` |
+| Tailscale setup fails | Run `tailscale up` first, then re-run `npx --yes itwillsync setup` |
