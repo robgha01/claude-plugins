@@ -26,6 +26,16 @@
         "name": "Robert Ghafoor",
         "email": ""
       }
+    },
+    {
+      "name": "itwillsync",
+      "description": "Sync any terminal AI coding agent (Claude Code, Aider, Goose, or any shell command) to a phone or tablet over the local network. Zero install on the phone — scan QR, open browser, done.",
+      "category": "productivity",
+      "source": "./itwillsync",
+      "author": {
+        "name": "Robert Ghafoor",
+        "email": ""
+      }
     }
   ]
 }

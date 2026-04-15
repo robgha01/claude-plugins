@@ -10,6 +10,7 @@ Personal Claude Code plugin marketplace for [@robgha01](https://github.com/robgh
 |---|---|
 | 🎫 [jira-ticket](jira-ticket/) | Auto-starts the right workflow when a Jira ticket ID is mentioned — fetches ticket, creates branch, picks workflow tier |
 | 🎯 [optimize-skill-description](optimize-skill-description/) | Iteratively improves a skill's description field using inline self-evaluation — no API key needed, works on Windows |
+| 📱 [itwillsync](itwillsync/) | Sync any terminal AI agent to your phone over local network — scan QR, open browser, no app install needed |
 
 ---
 
