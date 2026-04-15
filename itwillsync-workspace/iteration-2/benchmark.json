@@ -1,0 +1,177 @@
+{
+  "metadata": {
+    "skill_name": "itwillsync",
+    "skill_path": "C:/Workspace/claude-plugins/itwillsync/skills/itwillsync",
+    "baseline_path": "C:/Workspace/claude-plugins/itwillsync-workspace/skill-snapshot-v2",
+    "executor_model": "claude-sonnet-4-6",
+    "timestamp": "2026-04-15T00:00:00Z",
+    "evals_run": ["attention-indicator-bell-notification", "bidirectional-multi-session", "separator-agent-flags"],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 4,
+      "eval_name": "attention-indicator-bell-notification",
+      "configuration": "new_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 29.2,
+        "tokens": 13956,
+        "tool_calls": 2,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Response mentions the red-pulsing attention indicator (session card pulses red on the phone dashboard)", "passed": true, "evidence": "\"the session card on your phone dashboard pulse red\" -- explicitly describes the visual indicator"},
+        {"text": "Response explains the indicator is triggered by the terminal bell character emitted by the agent", "passed": true, "evidence": "\"it emits a terminal bell character. itwillsync detects this bell signal and makes the session card on your phone dashboard pulse red\""},
+        {"text": "Response uses correct `--` separator syntax (npx --yes itwillsync -- claude)", "passed": true, "evidence": "\"npx --yes itwillsync -- claude\" -- correct separator syntax used"},
+        {"text": "Response does NOT describe the phone connection as passive/read-only monitoring", "passed": true, "evidence": "\"Tap 'Open' to get a full interactive terminal on your phone where you can type your response\" -- clearly interactive"}
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "attention-indicator-bell-notification",
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "failed": 4,
+        "total": 4,
+        "time_seconds": 25.3,
+        "tokens": 13747,
+        "tool_calls": 2,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Response mentions the red-pulsing attention indicator (session card pulses red on the phone dashboard)", "passed": false, "evidence": "No mention of red pulsing card. Says only \"You will see it appear on your phone's screen immediately\" -- no visual indicator feature"},
+        {"text": "Response explains the indicator is triggered by the terminal bell character emitted by the agent", "passed": false, "evidence": "Bell character not mentioned at all"},
+        {"text": "Response uses correct `--` separator syntax (npx --yes itwillsync -- claude)", "passed": false, "evidence": "\"npx --yes itwillsync claude\" -- missing the `--` separator, uses old syntax"},
+        {"text": "Response does NOT describe the phone connection as passive/read-only monitoring", "passed": false, "evidence": "\"You can even respond from the phone if your browser supports keyboard input\" -- hedged framing implies monitoring with optional interaction"}
+      ],
+      "notes": ["Old skill has no awareness of the attention indicator feature. Frames connection as a live mirror/monitor rather than bidirectional terminal."]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "bidirectional-multi-session",
+      "configuration": "new_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 31.6,
+        "tokens": 14129,
+        "tool_calls": 3,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Response explains running a separate itwillsync command per agent, both appearing on one phone dashboard", "passed": true, "evidence": "Shows two separate terminal commands + \"Both sessions will appear as cards on your phone dashboard\""},
+        {"text": "Response confirms the phone connection is fully bidirectional (can type and approve prompts, not just read-only)", "passed": true, "evidence": "\"FULLY BIDIRECTIONAL CONTROL\" section: \"you can type commands, responses, and input just as if you were at the keyboard\""},
+        {"text": "Response uses correct `--` separator syntax for both agent commands", "passed": true, "evidence": "Both commands use `--` separator correctly"},
+        {"text": "Response mentions the red-pulse attention indicator for identifying which session needs input", "passed": true, "evidence": "\"ATTENTION INDICATOR: itwillsync detects this and makes the session card pulse red on the dashboard\""}
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "bidirectional-multi-session",
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 2,
+        "failed": 2,
+        "total": 4,
+        "time_seconds": 21.1,
+        "tokens": 13518,
+        "tool_calls": 2,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Response explains running a separate itwillsync command per agent, both appearing on one phone dashboard", "passed": true, "evidence": "Correct concept: separate commands per agent, both show on dashboard -- old syntax without `--`"},
+        {"text": "Response confirms the phone connection is fully bidirectional (can type and approve prompts, not just read-only)", "passed": true, "evidence": "\"itwillsync is fully bidirectional, not read-only\" -- explicitly stated"},
+        {"text": "Response uses correct `--` separator syntax for both agent commands", "passed": false, "evidence": "\"npx --yes itwillsync claude\" and \"npx --yes itwillsync aider\" -- both missing `--`, uses pre-v2 syntax"},
+        {"text": "Response mentions the red-pulse attention indicator for identifying which session needs input", "passed": false, "evidence": "No mention of the red pulsing session card or attention indicator feature"}
+      ],
+      "notes": ["Old skill correctly handles bidirectional framing but lacks attention indicator and uses outdated command syntax"]
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "separator-agent-flags",
+      "configuration": "new_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 19.2,
+        "tokens": 13477,
+        "tool_calls": 3,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Response identifies the risk of flag collision without the `--` separator", "passed": true, "evidence": "\"itwillsync may try to interpret --model as one of its own flags, which would likely result in an error or unexpected behavior\""},
+        {"text": "Response provides the correct syntax: `npx --yes itwillsync -- aider --model gpt-4o`", "passed": true, "evidence": "\"npx --yes itwillsync -- aider --model gpt-4o\" -- exact correct command"},
+        {"text": "Response explains that itwillsync flags go before `--` and agent flags go after", "passed": true, "evidence": "\"Everything before -- is interpreted by itwillsync, and everything after -- is passed directly to the agent\""},
+        {"text": "Response does NOT indicate that `npx itwillsync aider --model gpt-4o` (without `--`) is safe to use", "passed": true, "evidence": "Response explicitly warns against the unsafe form"}
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "separator-agent-flags",
+      "configuration": "old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 22.3,
+        "tokens": 13512,
+        "tool_calls": 2,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Response identifies the risk of flag collision without the `--` separator", "passed": true, "evidence": "\"Yes, there is a real risk that itwillsync would try to interpret --model as its own flag\""},
+        {"text": "Response provides the correct syntax: `npx --yes itwillsync -- aider --model gpt-4o`", "passed": true, "evidence": "\"npx --yes itwillsync -- aider --model gpt-4o\" -- exact correct syntax"},
+        {"text": "Response explains that itwillsync flags go before `--` and agent flags go after", "passed": true, "evidence": "\"The -- tells the itwillsync argument parser 'stop processing flags here; everything that follows is the command to run'\""},
+        {"text": "Response does NOT indicate that `npx itwillsync aider --model gpt-4o` (without `--`) is safe to use", "passed": true, "evidence": "Response clearly warns against the unsafe form"}
+      ],
+      "notes": ["Old skill had `-- <cmd>` pattern in the 'Any other command' row -- enough for the model to correctly infer separator behavior even without explicit flag-separation guidance"]
+    }
+  ],
+  "run_summary": {
+    "new_skill": {
+      "pass_rate": {"mean": 1.0, "stddev": 0.0, "min": 1.0, "max": 1.0},
+      "time_seconds": {"mean": 26.7, "stddev": 5.4, "min": 19.2, "max": 31.6},
+      "tokens": {"mean": 13854, "stddev": 276, "min": 13477, "max": 14129}
+    },
+    "old_skill": {
+      "pass_rate": {"mean": 0.5, "stddev": 0.41, "min": 0.0, "max": 1.0},
+      "time_seconds": {"mean": 22.9, "stddev": 1.8, "min": 21.1, "max": 25.3},
+      "tokens": {"mean": 13592, "stddev": 109, "min": 13512, "max": 13747}
+    },
+    "delta": {
+      "pass_rate": "+0.50",
+      "time_seconds": "+3.8",
+      "tokens": "+262"
+    }
+  },
+  "notes": [
+    "New skill achieves 100% vs 50% for old skill -- a 50-point improvement driven by the two new feature evals",
+    "Eval 4 (attention indicator) is the most discriminating: old skill scores 0/4 because it has zero awareness of the red-pulsing bell-notification feature",
+    "Eval 5 (bidirectional multi-session) is partially discriminating: old skill passes 2/4 -- bidirectional framing was already present but attention indicator and correct `--` syntax were missing",
+    "Eval 6 (separator syntax) is non-discriminating: both skill versions score 4/4 -- the old skill's `-- <cmd>` pattern was sufficient for the model to infer correct flag separation",
+    "New skill runs are slightly slower (+3.8s avg) -- richer content leads to more thorough responses",
+    "The attention indicator assertion (red-pulse, bell character) is the highest-value discriminator -- completely absent from old skill",
+    "Eval 6 shows knowledge generalization: the model correctly inferred `--` separator from a partial pattern in the old skill -- the explicit separator guidance may be redundant for this scenario but still valuable for discoverability"
+  ]
+}

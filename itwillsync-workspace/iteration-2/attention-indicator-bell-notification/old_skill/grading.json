@@ -1,0 +1,31 @@
+{
+  "eval_id": 4,
+  "eval_name": "attention-indicator-bell-notification",
+  "configuration": "old_skill",
+  "expectations": [
+    {
+      "text": "Response mentions the red-pulsing attention indicator (session card pulses red on the phone dashboard)",
+      "passed": false,
+      "evidence": "No mention of red pulsing card. Response says only \"You will see it appear on your phone's screen immediately\" -- no visual indicator feature described"
+    },
+    {
+      "text": "Response explains the indicator is triggered by the terminal bell character emitted by the agent",
+      "passed": false,
+      "evidence": "Bell character not mentioned at all in the response"
+    },
+    {
+      "text": "Response uses correct `--` separator syntax (npx --yes itwillsync -- claude)",
+      "passed": false,
+      "evidence": "\"npx --yes itwillsync claude\" -- missing the `--` separator, uses old syntax"
+    },
+    {
+      "text": "Response does NOT describe the phone connection as passive/read-only monitoring",
+      "passed": false,
+      "evidence": "\"You can even respond from the phone if your browser supports keyboard input\" -- hedged, passive framing. Implies monitoring with optional interaction rather than full bidirectional terminal"
+    }
+  ],
+  "pass_rate": 0.0,
+  "passed": 0,
+  "failed": 4,
+  "total": 4
+}

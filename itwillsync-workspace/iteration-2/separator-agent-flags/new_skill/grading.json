@@ -1,0 +1,31 @@
+{
+  "eval_id": 6,
+  "eval_name": "separator-agent-flags",
+  "configuration": "new_skill",
+  "expectations": [
+    {
+      "text": "Response identifies the risk of flag collision without the `--` separator",
+      "passed": true,
+      "evidence": "\"could cause a problem. itwillsync may try to interpret --model as one of its own flags, which would likely result in an error or unexpected behavior\""
+    },
+    {
+      "text": "Response provides the correct syntax: `npx --yes itwillsync -- aider --model gpt-4o`",
+      "passed": true,
+      "evidence": "\"npx --yes itwillsync -- aider --model gpt-4o\" -- exact correct command provided"
+    },
+    {
+      "text": "Response explains that itwillsync flags go before `--` and agent flags go after",
+      "passed": true,
+      "evidence": "\"Everything before -- is interpreted by itwillsync, and everything after -- is passed directly to the agent\""
+    },
+    {
+      "text": "Response does NOT indicate that `npx itwillsync aider --model gpt-4o` (without `--`) is safe to use",
+      "passed": true,
+      "evidence": "Response explicitly warns against the unsafe form and does not suggest it is safe"
+    }
+  ],
+  "pass_rate": 1.0,
+  "passed": 4,
+  "failed": 0,
+  "total": 4
+}

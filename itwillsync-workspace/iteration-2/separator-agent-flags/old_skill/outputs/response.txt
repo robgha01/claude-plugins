@@ -1,0 +1,23 @@
+Question: If I run `npx itwillsync aider --model gpt-4o`, will itwillsync try to interpret --model as its own flag? What is the right syntax?
+
+Short answer: Yes, there is a real risk that itwillsync would try to interpret --model as its own flag, and your command would likely fail or behave unexpectedly. Use the -- separator instead.
+
+Explanation:
+
+When you run `npx itwillsync aider --model gpt-4o`, the argument parser inside itwillsync receives the full argument list: ["aider", "--model", "gpt-4o"]. Most CLI parsers will scan all arguments for known flags, regardless of position. Because --model appears after "aider" (a positional argument), itwillsync may attempt to interpret --model as one of its own flags. If --model is not a recognised itwillsync flag, it will throw an "unknown option" error. If itwillsync does recognise a --model flag for its own purposes, it would consume the value gpt-4o silently and never pass either to Aider.
+
+The correct syntax uses the standard Unix -- separator:
+
+    npx --yes itwillsync -- aider --model gpt-4o
+
+The -- tells the itwillsync argument parser "stop processing flags here; everything that follows is the command to run." So itwillsync receives only what comes before --, and the string `aider --model gpt-4o` is passed verbatim as the child command. Aider then sees --model gpt-4o as its own argument and uses gpt-4o as the model.
+
+Note that this is the same pattern shown in the skill documentation under "Any other command":
+
+    npx --yes itwillsync -- <command>
+
+Applying it to your use case:
+
+    npx --yes itwillsync -- aider --model gpt-4o
+
+This is the safe, correct form. Without the --, flags intended for Aider may be misinterpreted by itwillsync.

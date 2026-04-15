@@ -1,0 +1,31 @@
+{
+  "eval_id": 4,
+  "eval_name": "attention-indicator-bell-notification",
+  "configuration": "new_skill",
+  "expectations": [
+    {
+      "text": "Response mentions the red-pulsing attention indicator (session card pulses red on the phone dashboard)",
+      "passed": true,
+      "evidence": "\"the session card on your phone dashboard pulse red\" -- explicitly describes the visual indicator"
+    },
+    {
+      "text": "Response explains the indicator is triggered by the terminal bell character emitted by the agent",
+      "passed": true,
+      "evidence": "\"it emits a terminal bell character. itwillsync detects this bell signal and makes the session card on your phone dashboard pulse red\""
+    },
+    {
+      "text": "Response uses correct `--` separator syntax (npx --yes itwillsync -- claude)",
+      "passed": true,
+      "evidence": "\"npx --yes itwillsync -- claude\" -- correct separator syntax used"
+    },
+    {
+      "text": "Response does NOT describe the phone connection as passive/read-only monitoring",
+      "passed": true,
+      "evidence": "\"Tap 'Open' to get a full interactive terminal on your phone where you can type your response\" -- clearly interactive"
+    }
+  ],
+  "pass_rate": 1.0,
+  "passed": 4,
+  "failed": 0,
+  "total": 4
+}

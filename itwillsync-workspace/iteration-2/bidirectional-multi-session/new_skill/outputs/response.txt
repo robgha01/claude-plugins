@@ -1,0 +1,54 @@
+Yes, you can monitor both Claude Code and Aider from your phone at the same time, and it is fully bidirectional -- not read-only.
+
+MULTIPLE SESSIONS ON ONE DASHBOARD
+
+itwillsync supports multiple sessions out of the box. Each terminal you wrap with itwillsync automatically registers with a shared hub, and all sessions appear together on a single phone dashboard. Since you already have Claude Code running in one terminal and Aider in another, you would start itwillsync separately in each terminal:
+
+Terminal 1 (Claude Code):
+  npx --yes itwillsync -- claude
+
+Terminal 2 (Aider):
+  npx --yes itwillsync -- aider
+
+Both sessions will appear as cards on your phone dashboard. You do not need to do anything special to link them -- the hub handles it automatically.
+
+IMPORTANT: Do not run these commands through Claude Code's Bash tool. They launch interactive PTY sessions and must be run directly in your own terminal windows.
+
+FULLY BIDIRECTIONAL CONTROL
+
+itwillsync is not read-only. From your phone you get:
+
+- Full interactive terminal -- you can type commands, responses, and input just as if you were at the keyboard
+- Full keyboard support -- the phone browser provides a keyboard for text input
+- Approve prompts -- when Claude Code or Aider pauses and asks for confirmation or input, you can type your response directly from your phone
+- Scroll and review output -- read the full session history
+
+ATTENTION INDICATOR
+
+When an agent is waiting for your input, it typically sends a bell character. itwillsync detects this and makes the session card pulse red on the dashboard, so you know at a glance which session needs your attention -- useful when you have two agents running simultaneously.
+
+DASHBOARD CONTROLS PER SESSION
+
+Each session card on the phone dashboard has:
+- Open: launches full-screen interactive terminal (this is where you type and approve things)
+- Rename: give the session a meaningful name (e.g. "Claude Code - Project A" vs "Aider - Refactor")
+- Info: shows PID, agent, port, directory, memory, uptime
+- Stop: terminates the session with confirmation
+
+STATUS INDICATORS
+
+- Green = active (output in last 30 seconds)
+- Yellow = idle (no output for 30+ seconds)
+- Red pulsing = attention needed (agent sent a bell signal, waiting for input)
+
+HUB MANAGEMENT
+
+To check on the hub and all running sessions from the command line:
+
+  npx --yes itwillsync hub status    # lists all sessions with name, status, uptime, port
+  npx --yes itwillsync hub info      # shows hub URL, QR code, and session count
+  npx --yes itwillsync hub stop      # stops the hub
+
+SUMMARY
+
+Yes -- run itwillsync in each terminal, scan the QR code once, and you get a live dashboard showing both agents. Tap "Open" on either session card to get a fully interactive terminal where you can type commands and approve prompts from your phone.

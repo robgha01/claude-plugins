@@ -1,0 +1,11 @@
+{
+  "eval_id": 4,
+  "eval_name": "attention-indicator-bell-notification",
+  "prompt": "I run claude code through itwillsync and sometimes go to the living room while it works. Is there any way to know when Claude needs my attention or approval without constantly checking my phone?",
+  "assertions": [
+    "Response mentions the red-pulsing attention indicator (session card pulses red on the phone dashboard)",
+    "Response explains the indicator is triggered by the terminal bell character emitted by the agent",
+    "Response uses correct `--` separator syntax (npx --yes itwillsync -- claude)",
+    "Response does NOT describe the phone connection as passive/read-only monitoring"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "eval_id": 5,
+  "eval_name": "bidirectional-multi-session",
+  "prompt": "I run Claude Code in one terminal and Aider in another. Can I watch both sessions on my phone at the same time? And can I actually type from my phone to approve prompts in both, or is it just a read-only mirror?",
+  "assertions": [
+    "Response explains running a separate itwillsync command per agent, both appearing on one phone dashboard",
+    "Response confirms the phone connection is fully bidirectional (can type and approve prompts, not just read-only)",
+    "Response uses correct `--` separator syntax for both agent commands",
+    "Response mentions the red-pulse attention indicator for identifying which session needs input"
+  ]
+}

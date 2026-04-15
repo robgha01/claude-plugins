@@ -1,0 +1,31 @@
+{
+  "eval_id": 5,
+  "eval_name": "bidirectional-multi-session",
+  "configuration": "new_skill",
+  "expectations": [
+    {
+      "text": "Response explains running a separate itwillsync command per agent, both appearing on one phone dashboard",
+      "passed": true,
+      "evidence": "\"Terminal 1 (Claude Code): npx --yes itwillsync -- claude\" + \"Terminal 2 (Aider): npx --yes itwillsync -- aider\" + \"Both sessions will appear as cards on your phone dashboard\""
+    },
+    {
+      "text": "Response confirms the phone connection is fully bidirectional (can type and approve prompts, not just read-only)",
+      "passed": true,
+      "evidence": "\"FULLY BIDIRECTIONAL CONTROL\" section: \"Full interactive terminal -- you can type commands, responses, and input just as if you were at the keyboard\""
+    },
+    {
+      "text": "Response uses correct `--` separator syntax for both agent commands",
+      "passed": true,
+      "evidence": "Both commands use `--` separator: `npx --yes itwillsync -- claude` and `npx --yes itwillsync -- aider`"
+    },
+    {
+      "text": "Response mentions the red-pulse attention indicator for identifying which session needs input",
+      "passed": true,
+      "evidence": "\"ATTENTION INDICATOR: When an agent is waiting for your input, it typically sends a bell character. itwillsync detects this and makes the session card pulse red on the dashboard\""
+    }
+  ],
+  "pass_rate": 1.0,
+  "passed": 4,
+  "failed": 0,
+  "total": 4
+}

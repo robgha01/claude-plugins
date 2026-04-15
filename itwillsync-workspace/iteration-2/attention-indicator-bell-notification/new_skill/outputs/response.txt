@@ -1,0 +1,30 @@
+Yes -- itwillsync solves this exactly, with a feature called the attention indicator.
+
+When Claude Code is waiting for your approval or needs input, it emits a terminal bell character. itwillsync detects this bell signal and makes the session card on your phone dashboard pulse red. You do not need to watch the terminal -- you just glance at your phone and the pulsing red card tells you Claude is waiting.
+
+Here is how to set it up:
+
+Step 1 -- One-time setup (run this in your terminal):
+
+    npx --yes itwillsync setup
+
+This wizard asks whether you are on the same WiFi as your laptop or using Tailscale. It saves the config to ~/.itwillsync/config.json.
+
+Step 2 -- Start Claude Code through itwillsync (run this in your terminal):
+
+    npx --yes itwillsync -- claude
+
+This wraps Claude Code in a PTY, starts a local WebSocket server, and displays a QR code. Scan it with your phone -- it opens a full interactive terminal in your phone's browser.
+
+Step 3 -- Go to the living room.
+
+Your phone dashboard shows a session card for the running Claude Code session. When Claude finishes working and is waiting for you to approve something, the card pulses red. Tap "Open" to get a full interactive terminal on your phone where you can type your response.
+
+Status indicators at a glance:
+- Green = Claude is actively working (output in the last 30 seconds)
+- Yellow = idle (no output for 30+ seconds)
+- Red pulsing = Claude needs your attention -- waiting for approval or input
+
+Note: the red pulse relies on Claude Code emitting a terminal bell character when it pauses for input. If you are not seeing the red pulse, that means the bell signal is not being emitted in your environment.
+
+No app install required on your phone. No cloud service involved. Everything runs locally on your laptop.

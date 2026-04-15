@@ -1,0 +1,31 @@
+{
+  "eval_id": 5,
+  "eval_name": "bidirectional-multi-session",
+  "configuration": "old_skill",
+  "expectations": [
+    {
+      "text": "Response explains running a separate itwillsync command per agent, both appearing on one phone dashboard",
+      "passed": true,
+      "evidence": "\"Terminal 1: npx --yes itwillsync claude\" + \"Terminal 2: npx --yes itwillsync aider\" + \"When you open the dashboard URL on your phone, you will see a live listing of all active sessions\" -- correct concept, old syntax"
+    },
+    {
+      "text": "Response confirms the phone connection is fully bidirectional (can type and approve prompts, not just read-only)",
+      "passed": true,
+      "evidence": "\"itwillsync is fully bidirectional, not read-only. The phone browser connects to a live PTY session\" -- explicitly stated"
+    },
+    {
+      "text": "Response uses correct `--` separator syntax for both agent commands",
+      "passed": false,
+      "evidence": "\"npx --yes itwillsync claude\" and \"npx --yes itwillsync aider\" -- both missing `--` separator, uses old pre-v2 syntax"
+    },
+    {
+      "text": "Response mentions the red-pulse attention indicator for identifying which session needs input",
+      "passed": false,
+      "evidence": "No mention of the red pulsing session card or the attention indicator feature anywhere in the response"
+    }
+  ],
+  "pass_rate": 0.5,
+  "passed": 2,
+  "failed": 2,
+  "total": 4
+}

@@ -1,0 +1,35 @@
+Yes to both questions -- here is how it works:
+
+MONITORING MULTIPLE SESSIONS AT THE SAME TIME
+
+itwillsync supports multiple concurrent sessions. Since each agent is started as a separate PTY session through the hub, you can sync both Claude Code and Aider by running each command in its own terminal:
+
+Terminal 1:
+  npx --yes itwillsync claude
+
+Terminal 2:
+  npx --yes itwillsync aider
+
+Both sessions register with the same hub daemon. When you open the dashboard URL on your phone, you will see a live listing of all active sessions. You can tap into each one individually to view and interact with it. To check session status at any time, run:
+
+  npx --yes itwillsync hub status
+
+This lists all running sessions with their uptime so you can confirm both Claude Code and Aider are registered.
+
+TYPING AND APPROVING FROM YOUR PHONE -- BIDIRECTIONAL INPUT
+
+itwillsync is fully bidirectional, not read-only. The phone browser connects to a live PTY session, which means:
+
+- You can type commands directly into the terminal from your phone's keyboard
+- You can approve prompts (e.g., "yes/no" confirmations in Claude Code or Aider)
+- You can send any keystrokes, including Enter, Ctrl+C, and other control sequences
+- Changes you type on the phone are reflected in the terminal immediately, just as if you were typing at the desktop
+
+This is the core value of the PTY-based approach: the phone browser is not a passive viewer -- it is a live terminal client. You have full control over both sessions from a single mobile browser tab per session.
+
+SUMMARY
+
+- Run one itwillsync command per agent in separate terminals
+- Both sessions appear in the hub dashboard on your phone
+- You can switch between them and interact with each one fully from your phone
+- No app install needed on the phone -- just open the URL or scan the QR code

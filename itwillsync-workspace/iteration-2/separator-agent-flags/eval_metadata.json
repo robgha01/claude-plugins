@@ -1,0 +1,11 @@
+{
+  "eval_id": 6,
+  "eval_name": "separator-agent-flags",
+  "prompt": "I want to use itwillsync with aider but pass --model gpt-4o to aider. Would `npx itwillsync aider --model gpt-4o` work or would itwillsync try to grab the --model flag for itself?",
+  "assertions": [
+    "Response identifies the risk of flag collision without the `--` separator",
+    "Response provides the correct syntax: `npx --yes itwillsync -- aider --model gpt-4o`",
+    "Response explains that itwillsync flags go before `--` and agent flags go after",
+    "Response does NOT indicate that `npx itwillsync aider --model gpt-4o` (without `--`) is safe to use"
+  ]
+}

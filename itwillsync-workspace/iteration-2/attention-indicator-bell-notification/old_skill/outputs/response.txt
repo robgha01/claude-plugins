@@ -1,0 +1,40 @@
+Yes, absolutely — itwillsync is exactly what you need here.
+
+itwillsync lets you follow your Claude Code session live on your phone's browser over your local WiFi network. No app install on the phone, no cloud, no setup beyond a one-time wizard. You will see the terminal in real time, including the exact moment Claude pauses and waits for your approval or input.
+
+Here is how to get started:
+
+Step 1 — One-time setup (run this once, ever)
+
+  npx --yes itwillsync setup
+
+This asks whether you want Local Network or Tailscale, then saves the answer. Pick "Local Network" if your laptop and phone are on the same WiFi.
+
+Step 2 — Start the sync when you leave the room
+
+  npx --yes itwillsync claude
+
+This wraps your Claude Code session in a PTY and starts a local hub server. It will print a QR code and a URL.
+
+Step 3 — Open on your phone
+
+Scan the QR code with your phone camera, or type the URL into your phone's browser. You now see a live mirror of the terminal.
+
+When Claude hits a permission prompt or needs your approval, you will see it appear on your phone's screen immediately. You can even respond from the phone if your browser supports keyboard input.
+
+A couple of practical tips:
+
+- Keep the browser tab open on your phone and set the screen timeout to "never" (or long) while you are waiting. Most mobile browsers will keep the WebSocket connection alive as long as the tab is in the foreground.
+- If your phone leaves the WiFi (e.g. you step outside), re-run "npx --yes itwillsync hub info" on the laptop to get the URL again and reconnect.
+- If you are often away from home WiFi and still want this to work, add the --tailscale flag:
+    npx --yes itwillsync claude --tailscale
+
+To check whether a session is still running when you come back:
+
+  npx --yes itwillsync hub status
+
+To stop everything:
+
+  npx --yes itwillsync hub stop
+
+Note: the hub does not auto-start after a reboot, so if you restart your laptop you will need to run the sync command again.

@@ -1,0 +1,14 @@
+Yes, running `npx itwillsync aider --model gpt-4o` without the -- separator could cause a problem. itwillsync may try to interpret --model as one of its own flags, which would likely result in an error or unexpected behavior.
+
+The correct syntax is to use the -- separator to clearly divide itwillsync's own flags from the agent command and its flags:
+
+    npx --yes itwillsync -- aider --model gpt-4o
+
+Everything before -- is interpreted by itwillsync, and everything after -- is passed directly to the agent (Aider in this case). This ensures --model gpt-4o is handed to Aider, not to itwillsync.
+
+If you also need to pass itwillsync flags (like --tailscale or --port), those go before the --:
+
+    npx --yes itwillsync --tailscale -- aider --model gpt-4o
+    npx --yes itwillsync --port 4000 -- aider --model gpt-4o
+
+Run that command directly in your terminal -- do not run it via a script or automated tool, as it launches an interactive PTY session.
