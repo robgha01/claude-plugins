@@ -298,3 +298,111 @@ Print confirmation:
 ✓ Comment posted to <TICKET-ID>
 ✓ Status → Ready for Test
 ```
+
+---
+
+## Save State Routine
+
+Called at milestones and on-demand. Writes or updates `<git-root>/jira-state/<TICKET-ID>.md`.
+
+### SR-1. Resolve file path
+
+```bash
+git rev-parse --show-toplevel
+```
+
+File path: `<git-root>/jira-state/<TICKET-ID>.md`
+
+Create directory if needed:
+```bash
+mkdir -p "<git-root>/jira-state"
+```
+
+### SR-2. Preserve existing Notes
+
+If the file already exists, read it. Extract everything from `## Notes` to end of file — this is `<preserved-notes>`. If the file does not exist, `<preserved-notes>` is empty.
+
+### SR-3. Determine completed steps
+
+Evaluate which steps have been completed in this session:
+
+| Step | Completed if... |
+|---|---|
+| Step 1 | Always true when this routine is called |
+| Step 2 | A branch was checked out or created this session |
+| Step 3 | Complexity tier was assessed and printed |
+| Step 4 | Implementation work was done (commits exist on branch beyond base) |
+| Step 5 | Ticket was transitioned to Ready for Test |
+
+Use `[x]` for completed steps and `[ ]` for pending.
+
+### SR-4. Get current git info
+
+```bash
+git branch --show-current
+git log -1 --format="%h %s" 2>/dev/null || echo "pending"
+```
+
+If output is "pending" or empty, use `*(pending)*` for the commit field.
+
+### SR-5. Determine status line
+
+- Called from Step 5 completion → `COMPLETE ✓`
+- All other cases → `IN PROGRESS`
+
+### SR-6. Construct Jira browse URL
+
+Use the Atlassian cloud base URL discovered in Step 1 (e.g. `https://comprend.atlassian.net`):
+```
+<cloud-base-url>/browse/<TICKET-ID>
+```
+
+### SR-7. Write the file
+
+Write the complete file using the template below. All `<placeholders>` are replaced with real values from Steps 1–6 above.
+
+````markdown
+# <TICKET-ID> — <title>
+
+## Status: <IN PROGRESS | COMPLETE ✓>
+
+**Jira:** <cloud-base-url>/browse/<TICKET-ID>
+**Type:** <issueType> | **Assignee:** <assignee>
+**Jira Status:** <current Jira status>
+
+---
+
+## Step Progress
+
+- <[x]|[ ]> Step 1 — Jira lookup
+- <[x]|[ ]> Step 2 — Branch created & ticket transitioned to In Progress
+- <[x]|[ ]> Step 3 — Complexity assessed (<tier or "pending">)
+- <[x]|[ ]> Step 4 — Implemented
+- <[x]|[ ]> Step 5 — Ready for Test
+
+---
+
+## Description
+<ticket description from Jira — plain text, not ADF>
+
+## Acceptance Criteria
+<acceptance criteria, one item per line with - prefix>
+
+## Git
+| | |
+|---|---|
+| **Branch** | `<branch-name>` |
+| **Commit** | `<hash message or *(pending)*>` |
+
+---
+
+## Notes
+<preserved-notes>
+````
+
+### SR-8. Confirm save
+
+Print:
+```
+✓ State saved → <file-path>
+```
