@@ -43,6 +43,14 @@ No git operations have been performed.
 
 Do not touch git. Do not continue.
 
+**On success** — after ticket data is extracted, print:
+
+```
+→ /rename <TICKET-ID>
+```
+
+This prompts the user to name the session after the ticket for easy identification in `/resume`. It cannot be automated — `/rename` is processed client-side and is not callable by the LLM.
+
 ---
 
 ## Step 2 — Branch Check & Create
