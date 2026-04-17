@@ -176,6 +176,8 @@ After the branch is checked out or created, transition the Jira ticket to "In Pr
 
 If the MCP call fails or the "In Progress" transition doesn't exist, note it in the summary but do not stop — branch setup already succeeded.
 
+After the transition attempt (success or failure), call the **Save State Routine**.
+
 ---
 
 ## Step 3 — Complexity Assessment & Context Summary
