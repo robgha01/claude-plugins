@@ -343,7 +343,7 @@ Evaluate which steps have been completed in this session:
 | Step 1 | Always true when this routine is called |
 | Step 2 | A branch was checked out or created this session |
 | Step 3 | Complexity tier was assessed and printed |
-| Step 4 | Implementation work was done this session |
+| Step 4 | Implementation commits exist on branch (`git log` from SR-4 shows at least one commit) |
 | Step 5 | Ticket was transitioned to Ready for Test |
 
 Use `[x]` for completed steps and `[ ]` for pending.
@@ -360,6 +360,7 @@ If output is "pending" or empty, use `*(pending)*` for the commit field.
 ### SR-5. Determine status line
 
 - Called from Step 5 completion → `COMPLETE ✓`
+- On-demand save and the existing file's header already shows `COMPLETE ✓` → retain `COMPLETE ✓`
 - All other cases → `IN PROGRESS`
 
 ### SR-6. Construct Jira browse URL
@@ -409,7 +410,7 @@ Write the complete file using the template below. All `<placeholders>` are repla
 ---
 
 ## Notes
-<preserved-notes>
+<preserved-notes — if empty, write "*(none yet)*">
 ````
 
 ### SR-8. Confirm save
