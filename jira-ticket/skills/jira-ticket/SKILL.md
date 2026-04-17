@@ -176,7 +176,7 @@ After the branch is checked out or created, transition the Jira ticket to "In Pr
 
 If the MCP call fails or the "In Progress" transition doesn't exist, note it in the summary but do not stop — branch setup already succeeded.
 
-After the transition attempt (success or failure), call the **Save State Routine**.
+After the transition attempt (success or failure), call the **Save State Routine** — unless the project's `CLAUDE.md` contains `jira-autosave: disabled`, in which case skip silently.
 
 ---
 
@@ -309,7 +309,7 @@ Print confirmation:
 ✓ Status → Ready for Test
 ```
 
-Call the **Save State Routine** with status `COMPLETE ✓` — Step 5 is now complete.
+Call the **Save State Routine** with status `COMPLETE ✓` — Step 5 is now complete — unless the project's `CLAUDE.md` contains `jira-autosave: disabled`, in which case skip silently.
 
 ---
 
