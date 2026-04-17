@@ -240,6 +240,14 @@ When done, invoke `superpowers:verification-before-completion`.
 
 ---
 
+## On-Demand Save
+
+**Triggers:** User says "save", "save state", "checkpoint", or "save progress".
+
+Call the **Save State Routine** immediately. Do not perform any other action.
+
+---
+
 ## Step 5 — Completion Flow (Ready for Test)
 
 **Triggers:** User says "ready for test", "move to ready for test", "done with the ticket", "mark as RFT", or similar completion phrasing.
