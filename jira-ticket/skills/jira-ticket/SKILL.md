@@ -309,6 +309,8 @@ Print confirmation:
 ✓ Status → Ready for Test
 ```
 
+Call the **Save State Routine** with status `COMPLETE ✓` — Step 5 is now complete.
+
 ---
 
 ## Save State Routine
