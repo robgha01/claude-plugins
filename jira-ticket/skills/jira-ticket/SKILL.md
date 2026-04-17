@@ -227,3 +227,66 @@ Invoke `superpowers:brainstorming` with full ticket context pre-loaded (same as 
 After brainstorming design is approved, invoke `superpowers:writing-plans`.
 Execute the resulting plan via `superpowers:subagent-driven-development` (recommended) or `superpowers:executing-plans`.
 When done, invoke `superpowers:verification-before-completion`.
+
+---
+
+## Step 5 — Completion Flow (Ready for Test)
+
+**Triggers:** User says "ready for test", "move to ready for test", "done with the ticket", "mark as RFT", or similar completion phrasing.
+
+### 5a. Draft completion comment
+
+Build a comment summarizing what was implemented and verified. Base it on:
+- The ticket description and acceptance criteria (from Step 1)
+- What was actually changed (git diff or file inspection)
+- Any verification evidence (environment URLs, computed values, test output)
+
+Structure:
+- What was done (brief, specific — mention themes/files if relevant)
+- Verification results with environment and evidence
+
+### 5b. Identify @mentions
+
+Ask the user who to mention, or suggest based on:
+- Anyone who gave direction in ticket comments
+- The reporter (only if they asked a specific question — Jira notifies them automatically)
+
+Look up account IDs with `lookupJiraAccountId`.
+
+### 5c. Show draft for approval
+
+Print the full comment exactly as it will appear:
+
+```
+Proposed comment for <TICKET-ID>:
+
+@Name1 @Name2
+
+<comment body>
+
+Post this and move to Ready for Test? (yes / edit / cancel)
+```
+
+**Do not post anything until the user approves.**
+
+- `yes` / `go` / `approve` → proceed
+- `edit` + revised text → update draft, show again
+- `cancel` / `no` → stop, nothing posted
+
+### 5d. Post comment
+
+Call `addCommentToJiraIssue` with `contentFormat: "adf"` to preserve @mention formatting.
+
+### 5e. Transition to Ready for Test
+
+1. Call `getTransitionsForJiraIssue`
+2. Find the transition whose name contains "ready" and "test" (case-insensitive)
+3. Call `transitionJiraIssue`
+
+If no matching transition exists, list available options and ask the user which to apply.
+
+Print confirmation:
+```
+✓ Comment posted to <TICKET-ID>
+✓ Status → Ready for Test
+```
