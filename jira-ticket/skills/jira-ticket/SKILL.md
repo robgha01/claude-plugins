@@ -320,7 +320,7 @@ mkdir -p "<git-root>/jira-state"
 
 ### SR-2. Preserve existing Notes
 
-If the file already exists, read it. Extract everything from `## Notes` to end of file — this is `<preserved-notes>`. If the file does not exist, `<preserved-notes>` is empty.
+If the file already exists, read it. Extract everything from `## Notes` to end of file — this is `<preserved-notes>`. If the file exists but contains no `## Notes` heading, `<preserved-notes>` is empty. If the file does not exist, `<preserved-notes>` is empty.
 
 ### SR-3. Determine completed steps
 
@@ -331,7 +331,7 @@ Evaluate which steps have been completed in this session:
 | Step 1 | Always true when this routine is called |
 | Step 2 | A branch was checked out or created this session |
 | Step 3 | Complexity tier was assessed and printed |
-| Step 4 | Implementation work was done (commits exist on branch beyond base) |
+| Step 4 | Implementation work was done this session |
 | Step 5 | Ticket was transitioned to Ready for Test |
 
 Use `[x]` for completed steps and `[ ]` for pending.
