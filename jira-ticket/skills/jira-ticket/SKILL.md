@@ -352,7 +352,7 @@ If output is "pending" or empty, use `*(pending)*` for the commit field.
 
 ### SR-6. Construct Jira browse URL
 
-Use the Atlassian cloud base URL discovered in Step 1 (e.g. `https://comprend.atlassian.net`):
+Use the Atlassian cloud base URL discovered in Step 1 (e.g. `https://<your-domain>.atlassian.net`):
 ```
 <cloud-base-url>/browse/<TICKET-ID>
 ```
