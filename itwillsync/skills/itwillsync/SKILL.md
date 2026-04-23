@@ -199,6 +199,9 @@ npx --yes itwillsync -- aider --model gpt-4
 # Second agent in another terminal (both show on phone dashboard)
 npx --yes itwillsync -- goose
 
+# If using Volta (pinned node version may be too old):
+volta run --node 23 npx itwillsync -- claude
+
 # Hub commands (Claude can run these):
 npx --yes itwillsync hub info      # URL + QR + session count
 npx --yes itwillsync hub status    # sessions with uptime
@@ -217,6 +220,8 @@ curl http://127.0.0.1:7963/api/health  # hub healthcheck
 | QR won't scan | Copy the URL printed below the QR; use that URL directly on phone |
 | No red pulse when Claude is waiting | The bell/attention feature requires the agent to emit a terminal bell character |
 | "npx: command not found" | Install Node.js 20+ first |
+| "setup does not exist" or commands not found | Node version too old -- itwillsync requires Node 20+. If using Volta: `volta run --node 23 npx itwillsync -- <agent>` |
+| Using Volta | Volta may pin an older Node version -- prefix all commands with `volta run --node 23`: e.g. `volta run --node 23 npx itwillsync -- claude` |
 | Slow first start | First run downloads the package -- a few seconds, normal |
 | Sessions lost after reboot | Hub and sessions don't auto-start on machine reboot -- re-run the command |
 | Hub seems stuck | Run `curl http://127.0.0.1:7963/api/health`; if no response, run `npx --yes itwillsync hub stop` then restart |
