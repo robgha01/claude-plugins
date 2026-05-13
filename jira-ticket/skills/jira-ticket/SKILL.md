@@ -290,10 +290,12 @@ Build a comment summarizing what was implemented and verified. Base it on:
 - The ticket description and acceptance criteria (from Step 1)
 - What was actually changed (git diff or file inspection)
 - Any verification evidence (environment URLs, computed values, test output)
+- The `rft-comment-suffix` directive from the project's CLAUDE.md, if set — append it as the last paragraph (see [Project Configuration](#project-configuration) for named templates like `cloudflare-cache-hint`)
 
 Structure:
 - What was done (brief, specific — mention themes/files if relevant)
 - Verification results with environment and evidence
+- Deployment hint paragraph (from `rft-comment-suffix`, if set)
 
 ### 5b. Identify @mentions and reassignee
 
