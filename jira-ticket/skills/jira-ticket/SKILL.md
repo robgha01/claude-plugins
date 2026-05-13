@@ -49,7 +49,34 @@ Do not touch git. Do not continue.
 → /rename <TICKET-ID>
 ```
 
-This prompts the user to name the session after the ticket for easy identification in `/resume`. It cannot be automated — `/rename` is processed client-side and is not callable by the LLM. Continue to Step 2 without waiting.
+This prompts the user to name the session after the ticket for easy identification in `/resume`. It cannot be automated — `/rename` is processed client-side and is not callable by the LLM. Continue to Step 1b without waiting.
+
+---
+
+## Step 1b — View image attachments (if any)
+
+Jira returns image attachments as `blob:https://media.staging.atl-paas.net/...` URLs inside the description markdown. These URLs **cannot be fetched directly** — they are scoped to an authenticated browser session. The text alone gives no visual context.
+
+**Detection** — scan the description for the substring `blob:https://media`. If absent, skip this step.
+
+**If a Chrome browser MCP is available** (e.g. `mcp__claude-in-chrome__*`):
+
+1. Navigate (or reuse an existing tab) to `<cloud-base-url>/browse/<TICKET-ID>`.
+2. Wait for the page to render (3s is usually enough; longer for slow connections).
+3. Scroll down to bring the description into view, take a screenshot.
+4. If more images are referenced, scroll further and screenshot each.
+5. Read the rendered images directly — they reveal mockups, bug screenshots, annotations, and other context that the markdown description omits.
+
+**If no Chrome MCP is available** — note the limitation in the Step 3 summary:
+
+```
+Note: ticket description references <N> image attachment(s) that could not be rendered.
+You may want to open the ticket in your browser before continuing.
+```
+
+Then continue. Do not block on this.
+
+**Why this matters** — three out of three tickets in our reference workflow had mockups or bug screenshots that were essential to understanding the task. Skipping this step leads to implementing against incomplete specs.
 
 ---
 
@@ -170,13 +197,18 @@ Act on the user's choice:
 
 After the branch is checked out or created, transition the Jira ticket to "In Progress" using `transitionJiraIssue`.
 
-1. Call `getTransitionsForJiraIssue` to get the available transitions for this ticket.
-2. Find the transition whose name matches "In Progress" (case-insensitive).
-3. Call `transitionJiraIssue` with that transition ID.
+**First, check the current status** (from the ticket data fetched in Step 1):
 
-If the MCP call fails or the "In Progress" transition doesn't exist, note it in the summary but do not stop — branch setup already succeeded.
+- If status is already "In Progress" → **skip the transition entirely**; note `Status: In Progress (already)` in the Step 3 summary.
+- If status is past In Progress (e.g. "Ready for test", "Done") → **skip the transition**; note `Status: <current> (not moving backwards)` and ask the user whether they intended to reopen the ticket.
+- Otherwise → proceed with the transition:
+  1. Call `getTransitionsForJiraIssue` to get the available transitions for this ticket.
+  2. Find the transition whose name matches "In Progress" (case-insensitive). Common transition names include `"Work started"`, `"Start progress"`, `"In Progress"`.
+  3. Call `transitionJiraIssue` with that transition ID.
 
-After the transition attempt (success or failure), call the **Save State Routine** — unless the project's `CLAUDE.md` contains `jira-autosave: disabled`, in which case skip silently.
+If the MCP call fails or no matching transition exists, note it in the Step 3 summary but do not stop — branch setup already succeeded.
+
+After the transition attempt (success, skipped, or failed), call the **Save State Routine** — unless the project's `CLAUDE.md` contains `jira-autosave: disabled`, in which case skip silently.
 
 ---
 
@@ -263,17 +295,25 @@ Structure:
 - What was done (brief, specific — mention themes/files if relevant)
 - Verification results with environment and evidence
 
-### 5b. Identify @mentions
+### 5b. Identify @mentions and reassignee
 
-Ask the user who to mention, or suggest based on:
+**@mentions** — ask the user who to mention, or suggest based on:
 - Anyone who gave direction in ticket comments
-- The reporter (only if they asked a specific question — Jira notifies them automatically)
+- The reporter (some teams want the reporter mentioned explicitly even though Jira auto-notifies; check project policy via the `rft-mention-reporter` directive — see [Project Configuration](#project-configuration))
+
+**Reassignee** — determine who should own the ticket during testing. Read in this order, first match wins:
+1. User's explicit instruction in this turn ("assign to X").
+2. Project `CLAUDE.md` directive `rft-assignee:` — one of `reporter` | `current` | `<accountId>` | `<email>`.
+3. Default: do not reassign; ask the user one short question before posting:
+   ```
+   Reassign to <reporter-name> (the reporter) for testing? (yes / no / someone else)
+   ```
 
 Look up account IDs with `lookupJiraAccountId`.
 
 ### 5c. Show draft for approval
 
-Print the full comment exactly as it will appear:
+Print the full comment exactly as it will appear, plus the planned reassignment:
 
 ```
 Proposed comment for <TICKET-ID>:
@@ -282,20 +322,35 @@ Proposed comment for <TICKET-ID>:
 
 <comment body>
 
+Reassign to: <name | "no change">
 Post this and move to Ready for Test? (yes / edit / cancel)
 ```
 
-**Do not post anything until the user approves.**
+**Do not post or reassign anything until the user approves.**
 
-- `yes` / `go` / `approve` → proceed
+- `yes` / `go` / `approve` → proceed with all three actions (comment, reassign, transition)
 - `edit` + revised text → update draft, show again
-- `cancel` / `no` → stop, nothing posted
+- `cancel` / `no` → stop, nothing changes on the ticket
 
 ### 5d. Post comment
 
 Call `addCommentToJiraIssue` with `contentFormat: "adf"` to preserve @mention formatting.
 
-### 5e. Transition to Ready for Test
+See the [ADF Comment Template](#adf-comment-template) section for the structure to use.
+
+### 5e. Reassign (if planned)
+
+If reassignment was confirmed in 5c, call `editJiraIssue` with:
+
+```json
+{
+  "fields": { "assignee": { "accountId": "<accountId>" } }
+}
+```
+
+Skip silently if "no change" was chosen.
+
+### 5f. Transition to Ready for Test
 
 1. Call `getTransitionsForJiraIssue`
 2. Find the transition whose name contains "ready" and "test" (case-insensitive)
@@ -306,6 +361,7 @@ If no matching transition exists, list available options and ask the user which 
 Print confirmation:
 ```
 ✓ Comment posted to <TICKET-ID>
+✓ Reassigned to <name>        (omit line if no change)
 ✓ Status → Ready for Test
 ```
 
@@ -419,3 +475,99 @@ Print:
 ```
 ✓ State saved → <file-path>
 ```
+
+---
+
+## ADF Comment Template
+
+`addCommentToJiraIssue` accepts either `markdown` or `adf` content format. **Use ADF** whenever the comment contains an `@mention` — markdown rendering of mentions is unreliable.
+
+Minimal ADF skeleton for a comment with one mention and a few paragraphs:
+
+```json
+{
+  "type": "doc",
+  "version": 1,
+  "content": [
+    {
+      "type": "paragraph",
+      "content": [
+        { "type": "mention", "attrs": { "id": "<accountId>", "text": "@<DisplayName>" } },
+        { "type": "text", "text": " " }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [{ "type": "text", "text": "<First paragraph of body>" }]
+    },
+    {
+      "type": "paragraph",
+      "content": [{ "type": "text", "text": "<Second paragraph>" }]
+    }
+  ]
+}
+```
+
+To add a bullet list:
+
+```json
+{
+  "type": "bulletList",
+  "content": [
+    {
+      "type": "listItem",
+      "content": [
+        { "type": "paragraph", "content": [{ "type": "text", "text": "<item 1>" }] }
+      ]
+    }
+  ]
+}
+```
+
+**Recipe for the standard RFT comment** — string together in order:
+1. One `paragraph` containing the `mention` node(s) and a trailing space.
+2. One `paragraph` with `<one-line summary including commit + merge SHAs>`.
+3. Either more `paragraph` nodes or a `bulletList` describing the changes.
+4. One `paragraph` with verification evidence (environment URL, what was tested).
+5. One `paragraph` with the deployment hint from `rft-comment-suffix` if set (see Project Configuration).
+
+---
+
+## Project Configuration
+
+Jira-ticket reads optional directives from the **consuming repo's `CLAUDE.md`** (the project being worked on, not the skill's own CLAUDE.md). Discovery order: walk up from the current working directory until a `CLAUDE.md` is found; check it for the directives below. If a workspace-level `CLAUDE.md` exists one level up, it provides defaults that can be overridden by the project-level file.
+
+Directives are declared as `key: value` pairs in any code block or paragraph that begins with `<!-- jira-ticket -->` or on a line by themselves anywhere in the file.
+
+| Directive | Values | Effect |
+|---|---|---|
+| `jira-autosave` | `enabled` (default) \| `disabled` | When `disabled`, skip the Save State Routine entirely. |
+| `rft-assignee` | `reporter` \| `current` \| `<accountId>` \| `<email>` | Who to reassign to in Step 5e. Default: ask. |
+| `rft-mention-reporter` | `always` \| `if-asked` (default) \| `never` | Whether to add the reporter as an `@mention` in the RFT comment. |
+| `rft-comment-suffix` | free text or named template (e.g. `cloudflare-cache-hint`) | Extra paragraph appended to the RFT comment body. Useful for deployment quirks. |
+| `merge-commit-format` | format string with `{TICKET-ID}` and `{TITLE}` placeholders | Used by `ship-branch` for the merge commit message. Default: `Merge {TICKET-ID}: {TITLE}`. |
+| `ship-strategy` | `direct-merge` \| `pull-request` \| `none` | What Step 4.5 (Ship) does. Default: `none` (no shipping unless user asks). |
+| `build-host` | `auto` (default) \| `azure-devops` \| `github` \| `gitlab` \| `none` | Which CI host to query for a build badge in Step 5a. `auto` runs `git remote get-url origin` and detects from the URL. |
+| `branch-prefix-overrides` | YAML map (see example) | Override default branch prefixes per issue type. |
+
+**Named templates** for `rft-comment-suffix`:
+
+| Template name | Renders as |
+|---|---|
+| `cloudflare-cache-hint` | `Note: the Cloudflare cache may need to be cleared before the change is visible on test.` |
+| `vercel-preview-hint` | `A preview deployment will be available at <preview-url> once the build completes.` |
+| `manual-deploy-hint` | `This change requires a manual deploy — ping the on-call before testing.` |
+
+**Example project CLAUDE.md snippet:**
+
+```
+<!-- jira-ticket -->
+rft-assignee: reporter
+rft-mention-reporter: always
+rft-comment-suffix: cloudflare-cache-hint
+ship-strategy: direct-merge
+merge-commit-format: Merge {TICKET-ID}: {TITLE}
+build-host: auto
+```
+
+With this configuration, the SCA workflow we documented becomes fully declarative — no per-ticket prompting needed for reassignment, cache hints, or merge format.

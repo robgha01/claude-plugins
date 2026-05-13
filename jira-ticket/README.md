@@ -65,10 +65,13 @@ Or use the explicit slash command:
 
 ## 🔄 What Happens
 
-Once triggered, the protocol runs 4 steps automatically:
+Once triggered, the protocol runs through these steps automatically:
 
 **1. Jira Lookup**
 Fetches ticket title, description, acceptance criteria, type, status, assignee, and story points via the Atlassian MCP. Stops immediately with a clear error if the ticket doesn't exist or MCP is not connected — no git operations performed.
+
+**1b. View image attachments**
+Detects `blob:` URLs in the description. If a Chrome browser MCP is connected, opens the ticket in the browser and screenshots the rendered images (mockups, bug screenshots). Without Chrome MCP, prints a note that images are unrendered so you can open the ticket yourself.
 
 **2. Branch Check & Create**
 Searches local and remote branches for any match on the ticket ID. Checks authorship of found branches:
@@ -89,6 +92,39 @@ You can override the assessed tier before anything proceeds.
 
 **4. Workflow Handoff**
 Hands off to the appropriate superpowers skill (`brainstorming`, `writing-plans`, `executing-plans`) with ticket context pre-loaded, so the workflow starts informed rather than from scratch.
+
+**5. Ready for Test (on completion)**
+When you say "ready for test" or similar, drafts a completion comment (with `@mentions` and an optional project-configured suffix like a Cloudflare cache hint), shows it for approval, posts via ADF, optionally reassigns the ticket per the `rft-assignee:` directive, and transitions status. Idempotent — won't re-transition tickets already In Progress.
+
+---
+
+## ⚙️ Project Configuration
+
+The plugin reads optional directives from the **consuming repo's `CLAUDE.md`** to adapt to per-project conventions without hard-coding them.
+
+Example snippet to drop into your project's `CLAUDE.md`:
+
+```
+<!-- jira-ticket -->
+rft-assignee: reporter
+rft-mention-reporter: always
+rft-comment-suffix: cloudflare-cache-hint
+ship-strategy: direct-merge
+merge-commit-format: Merge {TICKET-ID}: {TITLE}
+build-host: auto
+```
+
+| Directive | Effect |
+|---|---|
+| `rft-assignee` | `reporter` \| `current` \| `<accountId>` \| `<email>` — who to reassign to in Step 5 |
+| `rft-mention-reporter` | `always` \| `if-asked` \| `never` — auto-mention the reporter in RFT comments |
+| `rft-comment-suffix` | Named template (`cloudflare-cache-hint`, `vercel-preview-hint`, `manual-deploy-hint`) or free text appended to RFT comments |
+| `merge-commit-format` | Template with `{TICKET-ID}` / `{TITLE}` placeholders for the merge commit message (used by `ship-branch`) |
+| `ship-strategy` | `direct-merge` \| `pull-request` \| `none` (default) — what the optional Ship step does |
+| `build-host` | `auto` (default) \| `azure-devops` \| `github` \| `gitlab` \| `none` — which CI host to query for a build badge |
+| `jira-autosave` | `enabled` (default) \| `disabled` — toggle the state file written to `jira-state/<TICKET-ID>.md` |
+
+Full schema and the available named-suffix templates are documented in the [skill's SKILL.md](skills/jira-ticket/SKILL.md#project-configuration).
 
 ---
 
