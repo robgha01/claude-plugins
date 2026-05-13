@@ -270,6 +270,10 @@ After brainstorming design is approved, invoke `superpowers:writing-plans`.
 Execute the resulting plan via `superpowers:subagent-driven-development` (recommended) or `superpowers:executing-plans`.
 When done, invoke `superpowers:verification-before-completion`.
 
+### Frontend verification
+
+When the change is visual, CSS, or responsive, follow the **Frontend verification** hierarchy in your user-level `~/.claude/CLAUDE.md` before claiming completion. In short: prefer `mcp__chrome-devtools__emulate` (real viewport, media queries fire) over `mcp__claude-in-chrome__javascript_tool` (CSS rule inspection only — viewport doesn't actually change). Media-query-specific bugs (mobile, print, dark mode) **must** be verified with the first option.
+
 ---
 
 ## On-Demand Save
