@@ -36,6 +36,16 @@
         "name": "Robert Ghafoor",
         "email": ""
       }
+    },
+    {
+      "name": "azure-devops-build",
+      "description": "Build status badges and pipeline links for Azure DevOps repositories. Auto-detects Azure DevOps from the git remote and returns a Markdown badge + pipeline URL. Silent no-op on other hosts, designed to be safely orchestrated from skills like jira-ticket.",
+      "category": "development",
+      "source": "./azure-devops-build",
+      "author": {
+        "name": "Robert Ghafoor",
+        "email": ""
+      }
     }
   ]
 }

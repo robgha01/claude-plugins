@@ -1,0 +1,10 @@
+{
+  "name": "azure-devops-build",
+  "description": "Build status badges and pipeline links for Azure DevOps repositories. Auto-detects Azure DevOps from the git remote and returns a Markdown badge + pipeline URL for a given commit or branch. Usable standalone or orchestrated from skills like jira-ticket.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Robert Ghafoor",
+    "email": ""
+  },
+  "keywords": ["azure", "azure-devops", "ci", "build", "badge", "pipelines"]
+}
