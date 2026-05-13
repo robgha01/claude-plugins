@@ -290,12 +290,36 @@ Build a comment summarizing what was implemented and verified. Base it on:
 - The ticket description and acceptance criteria (from Step 1)
 - What was actually changed (git diff or file inspection)
 - Any verification evidence (environment URLs, computed values, test output)
+- A build badge / pipeline link if `build-host` resolves (see "Optional: enrich with build badge" below)
 - The `rft-comment-suffix` directive from the project's CLAUDE.md, if set — append it as the last paragraph (see [Project Configuration](#project-configuration) for named templates like `cloudflare-cache-hint`)
 
 Structure:
 - What was done (brief, specific — mention themes/files if relevant)
 - Verification results with environment and evidence
+- Build link / badge paragraph (from `build-host`, if resolves)
 - Deployment hint paragraph (from `rft-comment-suffix`, if set)
+
+**Optional: enrich with build badge.**
+Read the `build-host` directive (default `auto`). If set to `none`, skip. Otherwise:
+
+1. If `auto`, run `git remote get-url origin` and dispatch to the matching host-specific skill:
+   - `dev.azure.com` or `*.visualstudio.com` → `azure-devops-build`
+   - (future) `github.com` → `github-build-status`
+2. Invoke the resolved skill with the merge commit's branch (typically `main`).
+3. Parse its two-line output:
+   ```
+   BADGE_MD: <markdown badge or empty>
+   PIPELINE_URL: <pipeline URL>
+   ```
+4. If `BADGE_MD` is non-empty, add this paragraph to the draft:
+   ```
+   Build: <BADGE_MD>   ([Pipelines](<PIPELINE_URL>))
+   ```
+   If `BADGE_MD` is empty but `PIPELINE_URL` is present, add:
+   ```
+   Build: [Pipelines](<PIPELINE_URL>)
+   ```
+5. If the host-specific skill prints `not-azure` (or similar no-op signal) or isn't installed, silently skip — do not block on missing optional skills.
 
 ### 5b. Identify @mentions and reassignee
 
