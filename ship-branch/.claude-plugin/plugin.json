@@ -1,0 +1,10 @@
+{
+  "name": "ship-branch",
+  "description": "Merge a feature branch to main (or open a PR) using the project's configured ship strategy. Handles remote race conditions safely: clean rebase when local has only non-merge commits, guarded reset+remerge only when the local merge has no unique work outside the feature branch.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Robert Ghafoor",
+    "email": ""
+  },
+  "keywords": ["git", "merge", "deploy", "ship", "workflow"]
+}

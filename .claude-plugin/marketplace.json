@@ -46,6 +46,16 @@
         "name": "Robert Ghafoor",
         "email": ""
       }
+    },
+    {
+      "name": "ship-branch",
+      "description": "Merge a feature branch into the project's main branch using the configured ship strategy. Handles remote race conditions safely — picks clean rebase, guarded reset+remerge, or refuse-and-report based on whether local main has unique work to lose. Never force-pushes, never skips hooks.",
+      "category": "development",
+      "source": "./ship-branch",
+      "author": {
+        "name": "Robert Ghafoor",
+        "email": ""
+      }
     }
   ]
 }
