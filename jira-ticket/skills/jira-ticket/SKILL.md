@@ -280,6 +280,31 @@ Call the **Save State Routine** immediately. Do not perform any other action.
 
 ---
 
+## Step 4.5 — Ship (optional)
+
+**Triggers:** User says "ship it", "merge to main", "push to main", "deploy this", or similar shipping phrasing — OR the project's `ship-strategy:` directive is `direct-merge` or `pull-request` AND the user proceeds to Step 5 without manually merging first.
+
+This step is **optional**. If the project has `ship-strategy: none` (the default), skip silently — the user will integrate the branch manually.
+
+If `ship-branch` plugin is installed, invoke it. It will:
+1. Read the project's `ship-strategy:`, `main-branch:`, and `merge-commit-format:` directives.
+2. Merge the current feature branch to main (or open a PR) using the configured strategy.
+3. Handle remote race conditions safely (clean rebase or guarded reset+remerge).
+4. Print the merge commit SHA.
+
+Capture the merge commit SHA for use in Step 5a's draft comment ("merged to main as `<sha>`").
+
+If `ship-branch` is **not** installed but the project sets a `ship-strategy:` other than `none`, print:
+
+```
+Note: ship-strategy is "<strategy>" but the ship-branch plugin is not installed.
+You can install it with /plugin install ship-branch@robert-personal, or merge manually.
+```
+
+…and continue to Step 5 without blocking.
+
+---
+
 ## Step 5 — Completion Flow (Ready for Test)
 
 **Triggers:** User says "ready for test", "move to ready for test", "done with the ticket", "mark as RFT", or similar completion phrasing.
