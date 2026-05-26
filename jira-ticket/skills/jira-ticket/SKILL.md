@@ -311,7 +311,35 @@ You can install it with /plugin install ship-branch@robert-personal, or merge ma
 
 ## Step 5 — Completion Flow (Ready for Test)
 
-**Triggers:** User says "ready for test", "move to ready for test", "done with the ticket", "mark as RFT", or similar completion phrasing.
+**Triggers:** User says "ready for test", "move to ready for test", "done with the ticket", "mark as RFT", "post on the ticket", "post an update", "ping the reviewers", "comment on the ticket", or similar completion / update phrasing — also fires implicitly after a ship/merge when the ticket is already in Ready for test (see 5.0).
+
+### 5.0. Detect first-time RFT vs follow-up round
+
+Before drafting anything, decide which variant of Step 5 to run. **Jira is the source of truth**; the local `jira-state` file is a fast cache that may be missing or stale.
+
+**Sources, in priority order:**
+
+1. **Live Jira ticket status** — from Step 1's fetch (re-fetch if the session has been long).
+2. **Live Jira status changelog** — fetch via `getJiraIssue` with `expand: "changelog"`. Count how many times the ticket has transitioned **into** "Ready for test" — that's `rft_rounds_so_far`.
+3. **`jira-state/<TICKET-ID>.md`** (if it exists) — read `RFT Rounds` field as a hint. If it disagrees with the Jira-derived count, **trust Jira** and overwrite the cache when SR is next called.
+
+**Decision matrix:**
+
+| `rft_rounds_so_far` (from Jira) | Live status | Path |
+|---|---|---|
+| `0` | any | **Normal Step 5** (5a–5f) — first-time RFT. After posting, `rft_rounds_so_far` becomes `1`. |
+| `≥ 1` | "Ready for test" | **Follow-up variant** (5x) — incremental round on the same RFT. Counter unchanged (no new transition will be made). |
+| `≥ 1` | "To Do" / "In Progress" | **Normal Step 5** (5a–5f) — ticket was bounced back from RFT, do a full re-RFT. The transition in 5f will bump `rft_rounds_so_far` by 1. |
+| `≥ 1` | "Done" / "Closed" / similar terminal state | **Stop and ask**: "Ticket is already in `<status>`. Did you mean to reopen it, or post a note without reopening?" Don't auto-post or auto-transition. |
+
+**Rationale:**
+
+- Jira's changelog gives an authoritative round count even if `jira-state` is missing or wrong.
+- The follow-up variant exists because once a ticket is in RFT with a reviewer, transitioning it again is a no-op, re-asking for an assignee is noise, and re-printing the original RFT summary buries the new information. Reviewers want the **delta**, not the re-read.
+- Bounce-back from RFT (live status moved back to To Do / In Progress) is still a full Step 5 because the tester rejected the previous round and will want the full story when re-testing — but the round counter still ticks.
+- Terminal states (Done/Closed) deserve an explicit prompt because re-RFT-ing a closed ticket usually indicates a misunderstanding.
+
+If routing to **5x**, jump there. Otherwise continue with 5a.
 
 ### 5a. Draft completion comment
 
@@ -424,6 +452,60 @@ Call the **Save State Routine** with status `COMPLETE ✓` — Step 5 is now com
 
 ---
 
+## Step 5x — Follow-up Round Comment
+
+Use this variant when 5.0 routed here: the ticket is already in "Ready for test" and `jira-state` shows we did Step 5 before. Goal: tell the reviewers what's new in this round without re-running the whole completion flow.
+
+### 5x.a. Identify follow-up audience
+
+Fetch the comments via `getJiraIssue` (or a comment-listing tool if available) and locate the most recent comment authored by the **current Jira user** (the one running this skill — typically the assignee at the time Step 5 was first run). Everyone who commented **after** that point — minus the current user themselves — is the follow-up audience.
+
+- If the audience set is empty (no new comments since our last RFT), fall back to the assignee plus anyone who was @-mentioned in our previous RFT comment.
+- Do **not** auto-add the reporter unless they appear in the audience set on their own. (`rft-mention-reporter` is intentionally bypassed here — first-round RFT and incremental rounds have different audiences.)
+- The user can always override by saying "mention X" in the same turn.
+
+### 5x.b. Draft delta comment
+
+Same shape as the regular RFT comment in 5a (mentions paragraph, summary, bullet list of what changed, build link) — with two follow-up-specific additions:
+
+- The opening line frames the round explicitly: `Extra round on test (Release-<N>, merge <sha>). <one-line reason>.` Release number comes from the build/release tail; merge SHA is the short hash of the merge commit just pushed. If the release number isn't known, omit it — the merge SHA + build link cover the rest. **If `rft_rounds_so_far ≥ 3`** (i.e. we're already in round 3 or later of RFT for this ticket), include the current round number explicitly: `Round <rft_rounds_so_far> on test (Release-<X>, merge <sha>).` — reviewers seeing the third-or-later round benefit from the explicit count. For rounds 1 and 2, "Extra round on test" reads more naturally and the number doesn't add useful signal yet. Note: `<rft_rounds_so_far>` is the current round we're in (a 5x comment is a sub-round of the current round — it does not increment the counter), not the next one.
+- Close with a sentence stating what's unchanged from the previous round, so a reviewer can scope their re-test to just the new bullets (e.g. "Behaviour from the previous round is unchanged; this just extends X.").
+
+Do not append the `rft-comment-suffix` deployment hint — it was already conveyed in the first RFT.
+
+### 5x.c. Show draft for approval
+
+Print the comment exactly as it will appear:
+
+```
+Proposed follow-up comment for <TICKET-ID> (status will not change, no reassignment):
+
+@Name1 @Name2
+
+<comment body>
+
+Post this? (yes / edit / cancel)
+```
+
+Wait for explicit approval. `yes` posts; `edit` updates and re-shows; `cancel` stops with no changes.
+
+### 5x.d. Post the comment
+
+Call `addCommentToJiraIssue` with `contentFormat: "adf"`, same ADF skeleton as the main template.
+
+### 5x.e. Confirmation
+
+Print:
+```
+✓ Follow-up comment posted to <TICKET-ID> (status unchanged: Ready for test)
+```
+
+### 5x.f. Save state
+
+Call the **Save State Routine**. Step 5 stays `[x]`, status stays `COMPLETE ✓`. The commit field will pick up the new merge SHA via SR-4. Skip silently if `jira-autosave: disabled`.
+
+---
+
 ## Save State Routine
 
 Called at milestones and on-demand. Writes or updates `<git-root>/jira-state/<TICKET-ID>.md`.
@@ -455,9 +537,19 @@ Evaluate which steps have been completed in this session:
 | Step 2 | A branch was checked out or created this session |
 | Step 3 | Complexity tier was assessed and printed |
 | Step 4 | Implementation commits exist on branch (`git log` from SR-4 shows at least one commit) |
-| Step 5 | Ticket was transitioned to Ready for Test |
+| Step 5 | Ticket has ever been in "Ready for test" (per Jira changelog — the same `rft_rounds_so_far` value computed in Step 5.0) |
 
 Use `[x]` for completed steps and `[ ]` for pending.
+
+### SR-3b. Determine RFT round history
+
+`rft_rounds_so_far` was computed in 5.0 from the Jira changelog. Build a round history list:
+
+- Walk the changelog entries that moved status into "Ready for test", earliest first.
+- For each, capture: round number (1-indexed), date (`YYYY-MM-DD`), and the merge SHA that was on `main` at the time if it can be cross-referenced (from the comment posted in that round, or from `git log --first-parent main` near the transition timestamp; if uncertain, leave the SHA blank).
+- **One row per RFT transition, not per comment.** A 5x sub-round comment does **not** add a new row to the history — it shares the row of the round it belongs to. Only Step 5f (which performs a fresh transition into "Ready for test") creates a new row. SR called from 5x updates the header's `(latest: …)` parenthetical (date + new merge SHA) but leaves the row count unchanged.
+
+If `rft_rounds_so_far` is `0`, the history list is empty and the `RFT Rounds` field is `0`.
 
 ### SR-4. Get current git info
 
@@ -493,6 +585,7 @@ Write the complete file using the template below. All `<placeholders>` are repla
 **Jira:** <cloud-base-url>/browse/<TICKET-ID>
 **Type:** <issueType> | **Assignee:** <assignee>
 **Jira Status:** <current Jira status>
+**RFT Rounds:** <rft_rounds_so_far> <(latest: <YYYY-MM-DD>, merge <sha>) — omit the parenthetical when rounds = 0>
 
 ---
 
@@ -517,6 +610,13 @@ Write the complete file using the template below. All `<placeholders>` are repla
 |---|---|
 | **Branch** | `<branch-name>` |
 | **Commit** | `<hash message or *(pending)*>` |
+
+---
+
+## RFT History
+<from SR-3b — one line per round; omit this whole section if RFT Rounds is 0>
+- Round 1 — <YYYY-MM-DD> — merge <sha or "(unknown)"> — <full RFT (5a–5f) | follow-up (5x)>
+- Round 2 — ...
 
 ---
 
