@@ -68,15 +68,59 @@ Add the `robert-personal` marketplace and enable the plugin:
 Requires Node (already required by Claude Code). Pairs with claude-mem but does
 not require it.
 
+## Which fetches nudge (configurable)
+
+`getJiraIssue` is called for more than the initial load — the workflow also fetches
+changelog and comments. jira-mem classifies each call and nudges only for the
+classes you enable, then dedupes so you get **at most one nudge per ticket per
+session**.
+
+| Class | Detected by | Default |
+|---|---|---|
+| `full` | result carries a `summary` (or can't prove otherwise) | **on** |
+| `changelog` | `expand` includes `changelog` | off |
+| `comments` | restricted `fields` (no summary) incl. `comment` | off |
+| `metadata` | restricted `fields`, no summary, no comment (e.g. `status`) | off |
+
+Defaults nudge only substantive loads. A comments-/status-only fetch carries no
+summary, so it's skipped **and leaves no dedup marker** — the real load that
+follows still nudges.
+
+### Config sources (highest precedence first)
+
+1. OS env var (exported before launching Claude)
+2. `settings.json` `env` block
+3. project file `<cwd>/.jira-mem.json`
+4. plugin data file `$CLAUDE_PLUGIN_DATA/config.json`
+5. baked-in defaults
+
+**Env (quick toggle):**
+
+```jsonc
+// settings.json — also nudge on comments; keep dedup
+"env": { "JIRA_MEM_NUDGE": "full,comments" }
+```
+
+- `JIRA_MEM_NUDGE` — `full` · `full,comments` · `all` · `none`
+- `JIRA_MEM_DEDUP` — `1` / `0`
+
+**File (persistent / per-project):** `<repo>/.jira-mem.json`
+
+```json
+{
+  "nudge": { "full": true, "changelog": true, "comments": true, "metadata": true },
+  "dedup": false
+}
+```
+
 ## Behaviour notes
 
-- **Fail-open.** Any error in the hook → exits cleanly with no output. It never
-  blocks or delays the ticket fetch.
-- **Read-only.** It only reads the tool event from stdin and prints a reminder.
-- **Re-fires.** `getJiraIssue` is also called later for changelog/comments, so the
-  nudge may appear more than once per workflow. It's cheap, and the agent won't
-  re-search if it already has. (A future version could dedupe per ticket via
-  `CLAUDE_PLUGIN_DATA`.)
+- **Fail-open.** Any error, bad config, or unparseable result degrades toward the
+  safe default (nudge) and never blocks the fetch.
+- **Dedup is per (session + ticket)** and marks only when it actually nudges, so a
+  new session re-nudges and a different ticket still nudges.
+- **Read-only.** Reads the tool event from stdin, writes a small marker in the OS
+  temp dir (when dedup is on), and prints a reminder. Nothing else.
 
 ## Layout
 
@@ -84,7 +128,7 @@ not require it.
 jira-mem/
 ├── .claude-plugin/plugin.json
 ├── hooks/
-│   ├── hooks.json              # PostToolUse + matcher
-│   └── inject-mem-nudge.mjs    # emits additionalContext, fail-open
+│   ├── hooks.json              # PostToolUse + matcher (unchanged)
+│   └── inject-mem-nudge.mjs    # classify + dedup + config, fail-open
 └── README.md
 ```

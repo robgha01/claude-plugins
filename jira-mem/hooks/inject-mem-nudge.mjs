@@ -2,18 +2,165 @@
 /*
  * jira-mem — PostToolUse hook
  *
- * Fires right after a Jira ticket is fetched (matcher: mcp__.*getJiraIssue).
- * Emits `additionalContext` (a system-reminder the model sees) telling it to
- * retrieve related past work from long-term memory NOW that the ticket content
- * is known — querying by the ticket's PROBLEM/topic, never the bare ticket
- * number (a weak semantic signal).
+ * Fires after a Jira ticket is fetched (matcher: mcp__.*getJiraIssue) and emits
+ * `additionalContext` (a model-visible system reminder) telling the agent to pull
+ * related past work from long-term memory NOW, querying by the ticket's TOPIC —
+ * never the bare ticket number (a weak semantic signal).
  *
- * Why a hook and not a skill edit: this observes the Jira fetch instead of being
- * called by it, so the jira-ticket skill stays pure and claude-mem stays optional.
+ * Two gates decide whether to nudge:
+ *   1. CLASS gate   — classify the fetch (full | changelog | comments | metadata)
+ *                     and only nudge for classes the user has enabled.
+ *   2. DEDUP gate   — at most one nudge per (session + ticket), so repeat fetches
+ *                     (changelog/comments/re-loads) stay silent.
  *
- * Fail-open contract: ANY problem -> exit 0 with no output. A hook for a
- * read-only tool must never block or delay the ticket fetch.
+ * Config (highest precedence first):
+ *   - env JIRA_MEM_NUDGE = "full" | "full,comments" | "all" | "none"
+ *   - env JIRA_MEM_DEDUP = "1" | "0"
+ *   - project file  <cwd>/.jira-mem.json
+ *   - plugin data   $CLAUDE_PLUGIN_DATA/config.json
+ *   - baked-in defaults: nudge full only, dedup on
+ *
+ * Fail-open contract: ANY error, bad config, or unknown situation degrades toward
+ * the safe default (nudge), never crashes, never blocks the tool result.
  */
+
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
+
+const CLASSES = ['full', 'changelog', 'comments', 'metadata'];
+const DEFAULTS = {
+  nudge: { full: true, changelog: false, comments: false, metadata: false },
+  dedup: true,
+};
+
+function readJsonFile(path) {
+  try {
+    if (path && existsSync(path)) return JSON.parse(readFileSync(path, 'utf8'));
+  } catch { /* ignore */ }
+  return null;
+}
+
+function mergeNudge(base, incoming) {
+  if (!incoming || typeof incoming !== 'object') return base;
+  const out = { ...base };
+  for (const c of CLASSES) {
+    if (typeof incoming[c] === 'boolean') out[c] = incoming[c];
+  }
+  return out;
+}
+
+function parseNudgeEnv(raw) {
+  // "all" | "none" | comma list of class names
+  const v = String(raw).trim().toLowerCase();
+  if (!v) return null;
+  const out = { full: false, changelog: false, comments: false, metadata: false };
+  if (v === 'all') return { full: true, changelog: true, comments: true, metadata: true };
+  if (v === 'none') return out;
+  for (const part of v.split(',').map((s) => s.trim())) {
+    if (CLASSES.includes(part)) out[part] = true;
+  }
+  return out;
+}
+
+function loadConfig(cwd) {
+  let cfg = { nudge: { ...DEFAULTS.nudge }, dedup: DEFAULTS.dedup };
+
+  // plugin-data file (lowest), then project file (higher)
+  const pluginData = process.env.CLAUDE_PLUGIN_DATA;
+  for (const file of [
+    pluginData ? join(pluginData, 'config.json') : null,
+    cwd ? join(cwd, '.jira-mem.json') : null,
+  ]) {
+    const f = readJsonFile(file);
+    if (f) {
+      cfg.nudge = mergeNudge(cfg.nudge, f.nudge);
+      if (typeof f.dedup === 'boolean') cfg.dedup = f.dedup;
+    }
+  }
+
+  // env overrides (highest)
+  if (process.env.JIRA_MEM_NUDGE != null) {
+    const e = parseNudgeEnv(process.env.JIRA_MEM_NUDGE);
+    if (e) cfg.nudge = e;
+  }
+  if (process.env.JIRA_MEM_DEDUP != null) {
+    const d = String(process.env.JIRA_MEM_DEDUP).trim().toLowerCase();
+    if (['1', 'true', 'yes', 'on'].includes(d)) cfg.dedup = true;
+    if (['0', 'false', 'no', 'off'].includes(d)) cfg.dedup = false;
+  }
+
+  return cfg;
+}
+
+// Deep-scan a parsed result for a non-empty `summary` (handles nested + flat shapes).
+function hasSummary(obj, depth = 0) {
+  if (depth > 8 || !obj || typeof obj !== 'object') return false;
+  for (const [k, v] of Object.entries(obj)) {
+    if (k === 'summary' && typeof v === 'string' && v.trim()) return true;
+    if (v && typeof v === 'object' && hasSummary(v, depth + 1)) return true;
+  }
+  return false;
+}
+
+function parseResult(toolResult) {
+  let text = '';
+  try {
+    if (typeof toolResult === 'string') text = toolResult;
+    else if (toolResult && typeof toolResult === 'object') {
+      if (typeof toolResult.text === 'string') text = toolResult.text;
+      else if (Array.isArray(toolResult.content)) {
+        text = toolResult.content.map((c) => (c && c.text) || '').join('\n');
+      } else text = JSON.stringify(toolResult);
+    }
+    if (!text) return null;
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
+// Classify the fetch by intent. Priority: changelog > comments > metadata > full.
+function classify(input, toolResult) {
+  const expand = String(input.expand || '').toLowerCase();
+  if (expand.includes('changelog')) return 'changelog';
+
+  const f = input.fields;
+  if (Array.isArray(f) && f.length) {
+    const want = f.map((x) => String(x).toLowerCase());
+    const substantive = want.some((x) => ['summary', 'description', '*all', '*navigable'].includes(x));
+    if (!substantive) return want.includes('comment') ? 'comments' : 'metadata';
+  }
+
+  // No restricting signal: trust the payload. Has summary -> full.
+  // Can't parse (exotic server) -> assume full (fail-open to nudge).
+  const parsed = parseResult(toolResult);
+  if (parsed && !hasSummary(parsed)) return 'metadata';
+  return 'full';
+}
+
+function buildNudge(key) {
+  return (
+    `A Jira ticket${key ? ` (${key})` : ''} was just fetched. ` +
+    `Before starting work, retrieve related prior work from long-term memory: run a semantic ` +
+    `memory search (e.g. claude-mem's \`mem-search\` / \`search\` tool) using the ticket's PROBLEM ` +
+    `DESCRIPTION and domain terms as the query — NOT the bare ticket number, which is a weak ` +
+    `semantic signal that returns nearest-neighbour noise. Surface any past fixes, decisions, ` +
+    `or affected files for similar problems, then proceed. ` +
+    `If no memory/search tool is available in this session, skip silently.`
+  );
+}
+
+function emit(key) {
+  process.stdout.write(
+    JSON.stringify({
+      hookSpecificOutput: {
+        hookEventName: 'PostToolUse',
+        additionalContext: buildNudge(key),
+      },
+    }),
+  );
+}
 
 let raw = '';
 process.stdin.setEncoding('utf8');
@@ -23,9 +170,9 @@ process.stdin.on('end', () => {
   try {
     const event = JSON.parse(raw || '{}');
     const input = event.tool_input || {};
+    const sessionId = event.session_id || '';
+    const cwd = event.cwd || '';
 
-    // The ticket-key field name varies across Atlassian MCP servers; try the
-    // common ones and only use it if it looks like a real PROJ-123 key.
     const candidate =
       input.issueIdOrKey || input.issueKey || input.issueId || input.key || '';
     const key =
@@ -33,21 +180,27 @@ process.stdin.on('end', () => {
         ? candidate
         : '';
 
-    const additionalContext =
-      `A Jira ticket${key ? ` (${key})` : ''} was just fetched. ` +
-      `Before starting work, retrieve related prior work from long-term memory: run a semantic ` +
-      `memory search (e.g. claude-mem's \`mem-search\` / \`search\` tool) using the ticket's PROBLEM ` +
-      `DESCRIPTION and domain terms as the query — NOT the bare ticket number, which is a weak ` +
-      `semantic signal that returns nearest-neighbour noise. Surface any past fixes, decisions, ` +
-      `or affected files for similar problems, then proceed. ` +
-      `If no memory/search tool is available in this session, skip silently.`;
+    const cfg = loadConfig(cwd);
 
-    process.stdout.write(JSON.stringify({
-      hookSpecificOutput: {
-        hookEventName: 'PostToolUse',
-        additionalContext,
-      },
-    }));
+    // CLASS gate
+    const cls = classify(input, event.tool_result);
+    if (!cfg.nudge[cls]) process.exit(0); // class disabled -> silent, no marker
+
+    // DEDUP gate (only when enabled and we can key reliably)
+    if (cfg.dedup && sessionId && key) {
+      const safe = `${sessionId}__${key}`.replace(/[^A-Za-z0-9_.-]/g, '_');
+      const dir = join(tmpdir(), 'jira-mem');
+      const marker = join(dir, safe);
+      try {
+        if (existsSync(marker)) process.exit(0); // already nudged this ticket this session
+        mkdirSync(dir, { recursive: true });
+        writeFileSync(marker, String(Date.now()));
+      } catch {
+        /* marker I/O failed -> fall through and still nudge (dedup is best-effort) */
+      }
+    }
+
+    emit(key);
   } catch {
     /* fail-open: emit nothing */
   }
