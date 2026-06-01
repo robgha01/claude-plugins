@@ -139,24 +139,25 @@ function classify(input, toolResult) {
   return 'full';
 }
 
-function buildNudge(key) {
+// Note: the ticket key is intentionally NOT echoed here — the model already has it
+// in context, and keeping the text project-agnostic avoids baking in any ticket prefix.
+function buildNudge() {
   return (
-    `A Jira ticket${key ? ` (${key})` : ''} was just fetched. ` +
-    `Before starting work, retrieve related prior work from long-term memory: run a semantic ` +
-    `memory search (e.g. claude-mem's \`mem-search\` / \`search\` tool) using the ticket's PROBLEM ` +
-    `DESCRIPTION and domain terms as the query — NOT the bare ticket number, which is a weak ` +
-    `semantic signal that returns nearest-neighbour noise. Surface any past fixes, decisions, ` +
-    `or affected files for similar problems, then proceed. ` +
-    `If no memory/search tool is available in this session, skip silently.`
+    `A Jira ticket was just fetched — search memory for related prior work. ` +
+    `Observations and session summaries are the source of truth for prior fixes, decisions, ` +
+    `and findings. Use \`mem-search\` now, querying by the ticket's title / summary / description ` +
+    `(the problem domain — not the ticket number). Relevant prior work can exist even when this ` +
+    `ticket is new — e.g. a similar problem solved before. Trust what \`mem-search\` returns and ` +
+    `fold it into your response. If no memory/search tool is available, skip.`
   );
 }
 
-function emit(key) {
+function emit() {
   process.stdout.write(
     JSON.stringify({
       hookSpecificOutput: {
         hookEventName: 'PostToolUse',
-        additionalContext: buildNudge(key),
+        additionalContext: buildNudge(),
       },
     }),
   );
@@ -200,7 +201,7 @@ process.stdin.on('end', () => {
       }
     }
 
-    emit(key);
+    emit();
   } catch {
     /* fail-open: emit nothing */
   }
