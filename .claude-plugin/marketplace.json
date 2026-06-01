@@ -56,6 +56,16 @@
         "name": "Robert Ghafoor",
         "email": ""
       }
+    },
+    {
+      "name": "jira-mem",
+      "description": "When a Jira ticket is fetched, nudges the agent to retrieve related past work from long-term memory (e.g. claude-mem) by topic. Closes the gap where prompt-time semantic injection only saw a bare ticket ID. A single PostToolUse hook — no skills, no coupling to jira-ticket, silent no-op if no memory tool is present.",
+      "category": "development",
+      "source": "./jira-mem",
+      "author": {
+        "name": "Robert Ghafoor",
+        "email": ""
+      }
     }
   ]
 }

@@ -1,0 +1,18 @@
+{
+  "description": "After a Jira ticket is fetched via the Atlassian MCP, inject a just-in-time reminder telling the agent to pull related past work from long-term memory (claude-mem) by topic — not by the bare ticket number.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "mcp__.*getJiraIssue",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/inject-mem-nudge.mjs"],
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
